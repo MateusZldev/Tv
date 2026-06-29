@@ -11,11 +11,11 @@
             text-align: center; 
             font-family: Arial, sans-serif; 
             padding-top: 50px; 
+            margin: 0;
         }
         h1 { font-size: 30px; color: #0084ff; }
-        .grade { display: block; max-width: 500px; margin: 0 auto; }
+        .grade { display: block; max-width: 500px; margin: 0 auto; padding: 0 20px; }
         
-        /* Botão super largo e alto para facilitar o clique com a setinha da TV */
         .btn { 
             display: block; 
             width: 100%; 
@@ -23,33 +23,66 @@
             margin: 20px 0; 
             background: #1e1e1e; 
             color: white; 
-            text-decoration: none; 
             border-radius: 15px; 
             font-size: 24px; 
             font-weight: bold;
             border: 4px solid #444; 
             cursor: pointer;
+            box-sizing: border-box;
         }
-        /* Quando a setinha do controle passar por cima ou focar */
         .btn:hover, .btn:focus { 
             border-color: #0084ff; 
             background: #0056b3; 
         }
+
+        /* Área do leitor de vídeo - cobrirá todo o ecrã da TV */
+        #containerVideo {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: #000;
+            z-index: 9999;
+        }
+        video { width: 100%; height: 100%; }
     </style>
 </head>
 <body>
 
-    <h1>🍿 Selecione o Filme com a Setinha</h1>
-    <p style="font-size: 18px;">Leve a setinha até o botão e aperte o botão do meio (OK/Enter)</p>
-    
-    <div class="grade">
-        <!-- Canal de teste ao vivo que está funcionando -->
-        <a href="https://m9.stb.services/cptv/index.m3u8" 
-           class="btn" 
-           onclick="window.location.href=this.href; return false;">
-           📺 Assistir TV Ao Vivo
-        </a>
+    <div id="conteudoPrincipal">
+        <h1>🍿 Selecione o Canal com a Setinha</h1>
+        <p style="font-size: 18px;">Leve a setinha até o botão e carregue no OK do comando</p>
+        
+        <div class="grade">
+            <button class="btn" onclick="iniciarFilme('https://m9.stb.services/cptv/index.m3u8')">
+                📺 Assistir TV Ao Vivo
+            </button>
+        </div>
     </div>
 
+    <div id="containerVideo">
+        <video id="playerFilme" controls></video>
+    </div>
+
+    <script>
+        function iniciarFilme(url) {
+            var container = document.getElementById('containerVideo');
+            var video = document.getElementById('playerFilme');
+            
+            // Ativa o ecrã do leitor sobrepondo tudo
+            container.style.display = 'block';
+            video.src = url;
+            video.play();
+
+            // Se carregar no botão 'Back' (Voltar) do comando da TV LG, fecha o vídeo
+            window.addEventListener('keydown', function(e) {
+                if (e.keyCode === 461 || e.key === 'Escape') {
+                    video.pause();
+                    video.src = '';
+                    container.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
