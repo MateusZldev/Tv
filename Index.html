@@ -2,48 +2,83 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu Cinema</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        body { background: #000; color: #fff; text-align: center; font-family: sans-serif; padding-top: 50px; }
-        .btn { display: block; width: 80%; max-width: 400px; margin: 20px auto; padding: 30px; background: #222; color: white; border-radius: 15px; font-size: 24px; font-weight: bold; border: 3px solid #444; cursor: pointer; }
-        #containerVideo { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; }
+        body { 
+            background: #121212; 
+            color: #fff; 
+            text-align: center; 
+            font-family: Arial, sans-serif; 
+            padding-top: 50px; 
+            margin: 0;
+        }
+        h1 { font-size: 30px; color: #0084ff; }
+        .grade { display: block; max-width: 500px; margin: 0 auto; padding: 0 20px; }
+        
+        .btn { 
+            display: block; 
+            width: 100%; 
+            padding: 30px; 
+            margin: 20px 0; 
+            background: #1e1e1e; 
+            color: white; 
+            border-radius: 15px; 
+            font-size: 24px; 
+            font-weight: bold;
+            border: 4px solid #444; 
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        .btn:hover, .btn:focus { 
+            border-color: #0084ff; 
+            background: #0056b3; 
+        }
+
+        #containerVideo {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: #000;
+            z-index: 9999;
+        }
         video { width: 100%; height: 100%; }
     </style>
 </head>
 <body>
 
-    <button class="btn" onclick="iniciarFilme('https://m9.stb.services/cptv/index.m3u8')">
-        📺 Assistir TV Ao Vivo
-    </button>
+    <div id="conteudoPrincipal">
+        <h1>🍿 Seu Cinema Local</h1>
+        <p style="font-size: 18px;">Lembre-se de deixar o celular conectado no mesmo Wi-Fi da TV</p>
+        
+        <div class="grade">
+            <!-- Seu link local adicionado aqui. Se mudar para .mp4 no seu celular, mude aqui no código também! -->
+            <button class="btn" onclick="iniciarFilme('Http://192.168.1.71:30001/file/EZ8xTuhE/video.mkv')">
+                🎬 Assistir Filme Local
+            </button>
+        </div>
+    </div>
 
-    <div id="containerVideo"><video id="playerFilme" controls></video></div>
+    <div id="containerVideo">
+        <video id="playerFilme" controls autoplay></video>
+    </div>
 
     <script>
         function iniciarFilme(url) {
             var container = document.getElementById('containerVideo');
             var video = document.getElementById('playerFilme');
+            
             container.style.display = 'block';
+            video.src = url;
+            video.play();
 
-            // Configuração para deixar o carregamento mais leve para TVs
-            var config = {
-                maxBufferLength: 10,
-                maxMaxBufferLength: 10,
-                lowLatencyMode: true
-            };
-
-            var hls = new Hls(config);
-            hls.loadSource(url);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                video.play();
-            });
-
+            // Botão 'Back' (Voltar) do controle da TV fecha o player e limpa a memória
             window.addEventListener('keydown', function(e) {
-                if (e.keyCode === 461) { // Botão 'Back' da LG
+                if (e.keyCode === 461 || e.key === 'Escape') {
                     video.pause();
+                    video.src = '';
                     container.style.display = 'none';
-                    hls.destroy(); // Limpa a memória da TV
                 }
             });
         }
