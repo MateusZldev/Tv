@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Cinema Particular</title>
+    <style>
+        /* Visual escuro para não cansar os olhos na TV */
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 { margin-bottom: 30px; font-size: 2.5rem; color: #0084ff; }
+
+        /* Grade onde os filmes vão ficar alinhados */
+        .grade-filmes {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Estilo dos botões dos filmes (Otimizado para o controle da TV) */
+        .cartao-filme {
+            background: #1e1e1e;
+            color: white;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            padding: 20px;
+            width: 220px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* Isso aqui acende o botão quando você passa com a seta do controle remoto */
+        .cartao-filme:focus {
+            border-color: #0084ff;
+            background-color: #2a2a2a;
+            transform: scale(1.08);
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🍿 Meus Filmes na TV</h1>
+    <p>Use as setas do controle remoto para escolher e aperte OK</p>
+
+    <div class="grade-filmes">
+        
+        <button class="cartao-filme" tabindex="1" onclick="playerLego('COLOQUE_O_LINK_DO_FILME_1_AQUI')">
+            <strong>🎬 Filme Exemplo 1</strong>
+        </button>
+
+        <button class="cartao-filme" tabindex="2" onclick="playerLego('COLOQUE_O_LINK_DO_FILME_2_AQUI')">
+            <strong>🎬 Filme Exemplo 2</strong>
+        </button>
+
+    </div>
+
+    <script>
+        function playerLego(urlVideo) {
+            // Se já tiver um vídeo rodando, ele deleta da memória da TV antes de abrir o outro
+            let playerAntigo = document.getElementById('playerNativo');
+            if (playerAntigo) playerAntigo.remove();
+
+            // Cria o player leve que a LG LJ600B adora
+            let video = document.createElement('video');
+            video.id = 'playerNativo';
+            video.src = urlVideo;
+            video.controls = true;
+            video.autoplay = true;
+
+            // Força a tela cheia na TV
+            video.style.position = 'fixed';
+            video.style.top = '0'; video.style.left = '0';
+            video.style.width = '100vw'; video.style.height = '100vh';
+            video.style.backgroundColor = '#000';
+            video.style.zIndex = '9999';
+
+            // Adiciona um botão "Voltar" escondido no teclado/controle (tecla Esc ou Back)
+            window.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' || e.keyCode === 461) { // 461 é o botão 'Back' da LG
+                    video.remove();
+                }
+            });
+
+            document.body.appendChild(video);
+        }
+    </script>
+</body>
+</html>
