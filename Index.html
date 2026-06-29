@@ -3,100 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Cinema Particular</title>
+    <title>Meu Cinema</title>
     <style>
-        /* Visual escuro para não cansar os olhos na TV */
-        body {
-            background-color: #121212;
-            color: #ffffff;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            padding: 40px;
-            text-align: center;
+        body { 
+            background: #121212; 
+            color: #fff; 
+            text-align: center; 
+            font-family: Arial, sans-serif; 
+            padding-top: 50px; 
         }
-
-        h1 { margin-bottom: 30px; font-size: 2.5rem; color: #0084ff; }
-
-        /* Grade onde os filmes vão ficar alinhados */
-        .grade-filmes {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 25px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* Estilo dos botões dos filmes (Otimizado para o controle da TV) */
-        .cartao-filme {
-            background: #1e1e1e;
-            color: white;
-            border: 3px solid transparent;
-            border-radius: 12px;
-            padding: 20px;
-            width: 220px;
-            font-size: 1.2rem;
+        h1 { font-size: 30px; color: #0084ff; }
+        .grade { display: block; max-width: 500px; margin: 0 auto; }
+        
+        /* Botão super largo e alto para facilitar o clique com a setinha da TV */
+        .btn { 
+            display: block; 
+            width: 100%; 
+            padding: 30px; 
+            margin: 20px 0; 
+            background: #1e1e1e; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 15px; 
+            font-size: 24px; 
+            font-weight: bold;
+            border: 4px solid #444; 
             cursor: pointer;
-            transition: all 0.2s ease;
         }
-
-        /* Isso aqui acende o botão quando você passa com a seta do controle remoto */
-        .cartao-filme:focus {
-            border-color: #0084ff;
-            background-color: #2a2a2a;
-            transform: scale(1.08);
-            outline: none;
+        /* Quando a setinha do controle passar por cima ou focar */
+        .btn:hover, .btn:focus { 
+            border-color: #0084ff; 
+            background: #0056b3; 
         }
     </style>
 </head>
 <body>
 
-    <h1>🍿 Meus Filmes na TV</h1>
-    <p>Use as setas do controle remoto para escolher e aperte OK</p>
-
-    <div class="grade-filmes">
-        
-        <!-- BOTÃO DE TESTE: Vídeo direto que não expira -->
-        <button class="cartao-filme" tabindex="1" onclick="playerLego('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')">
-            <strong>🎬 Testar Filme (.mp4)</strong>
-        </button>
-
-        <!-- FILME 2: Espaço livre para o próximo link livre que você encontrar -->
-        <button class="cartao-filme" tabindex="2" onclick="playerLego('COLOQUE_O_PROXIMO_LINK_AQUI')">
-            <strong>🎬 Próximo Filme</strong>
-        </button>
-
+    <h1>🍿 Selecione o Filme com a Setinha</h1>
+    <p style="font-size: 18px;">Leve a setinha até o botão e aperte o botão do meio (OK/Enter)</p>
+    
+    <div class="grade">
+        <a href="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" 
+           class="btn" 
+           onclick="window.location.href=this.href; return false;">
+           🎬 Testar Filme (MP4)
+        </a>
     </div>
 
-    <script>
-        function playerLego(urlVideo) {
-            // Remove o player antigo para não sobrecarregar a memória RAM da TV LG
-            let playerAntigo = document.getElementById('playerNativo');
-            if (playerAntigo) playerAntigo.remove();
-
-            // Cria o player nativo leve em HTML5
-            let video = document.createElement('video');
-            video.id = 'playerNativo';
-            video.src = urlVideo;
-            video.controls = true;
-            video.autoplay = true;
-
-            // Força o vídeo a rodar em tela cheia na TV
-            video.style.position = 'fixed';
-            video.style.top = '0'; video.style.left = '0';
-            video.style.width = '100vw'; video.style.height = '100vh';
-            video.style.backgroundColor = '#000';
-            video.style.zIndex = '9999';
-
-            // Mapeia o botão 'Back' (Voltar) do controle remoto da LG (código 461) para fechar o filme
-            window.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' || e.keyCode === 461) {
-                    video.remove();
-                }
-            });
-
-            document.body.appendChild(video);
-        }
-    </script>
 </body>
 </html>
