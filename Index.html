@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu Cinema</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         body { 
             background: #121212; 
@@ -35,7 +36,6 @@
             background: #0056b3; 
         }
 
-        /* Área do leitor de vídeo - cobrirá todo o ecrã da TV */
         #containerVideo {
             display: none;
             position: fixed;
@@ -50,8 +50,8 @@
 <body>
 
     <div id="conteudoPrincipal">
-        <h1>🍿 Selecione o Canal com a Setinha</h1>
-        <p style="font-size: 18px;">Leve a setinha até o botão e carregue no OK do comando</p>
+        <h1>🍿 Selecione o Filme com a Setinha</h1>
+        <p style="font-size: 18px;">Leve a setinha até o botão e aperte o OK do controle</p>
         
         <div class="grade">
             <button class="btn" onclick="iniciarFilme('https://m9.stb.services/cptv/index.m3u8')">
@@ -61,7 +61,7 @@
     </div>
 
     <div id="containerVideo">
-        <video id="playerFilme" controls></video>
+        <video id="playerFilme" controls autoplay></video>
     </div>
 
     <script>
@@ -69,12 +69,26 @@
             var container = document.getElementById('containerVideo');
             var video = document.getElementById('playerFilme');
             
-            // Ativa o ecrã do leitor sobrepondo tudo
             container.style.display = 'block';
-            video.src = url;
-            video.play();
 
-            // Se carregar no botão 'Back' (Voltar) do comando da TV LG, fecha o vídeo
+            // Verifica se a TV precisa da biblioteca corretora para rodar o vídeo
+            if (Hls.isSupported()) {
+                var hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play();
+                });
+            } 
+            // Se a TV já tiver suporte nativo, roda direto
+            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.addEventListener('loadedmetadata', function() {
+                    video.play();
+                });
+            }
+
+            // Botão 'Back' (Voltar) ou 'Exit' do controle da TV fecha o player
             window.addEventListener('keydown', function(e) {
                 if (e.keyCode === 461 || e.key === 'Escape') {
                     video.pause();
