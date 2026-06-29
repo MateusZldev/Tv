@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Cinema</title>
+    <title>Teste do Cinema</title>
     <style>
         body { 
             background: #121212; 
@@ -43,42 +43,39 @@
             background: #000;
             z-index: 9999;
         }
-        video { width: 100%; height: 100%; }
+        img { width: 100%; height: 100%; object-fit: contain; }
     </style>
 </head>
 <body>
 
     <div id="conteudoPrincipal">
-        <h1>🍿 Seu Cinema Local</h1>
-        <p style="font-size: 18px;">Lembre-se de deixar o celular conectado no mesmo Wi-Fi da TV</p>
+        <h1>🍿 Teste de Botão do Cinema</h1>
+        <p style="font-size: 18px;">Clique no botão abaixo para testar o comando da TV</p>
         
         <div class="grade">
-            <!-- Seu link local adicionado aqui. Se mudar para .mp4 no seu celular, mude aqui no código também! -->
-            <button class="btn" onclick="iniciarFilme('Http://192.168.1.71:30001/file/EZ8xTuhE/video.mkv')">
-                🎬 Assistir Filme Local
+            <button class="btn" onclick="iniciarFilme('https://files.catbox.moe/qq4y6i.jpeg')">
+                🎬 Testar Player na TV
             </button>
         </div>
     </div>
 
     <div id="containerVideo">
-        <video id="playerFilme" controls autoplay></video>
+        <img id="imagemTeste" src="" alt="Tela de Teste">
     </div>
 
     <script>
         function iniciarFilme(url) {
             var container = document.getElementById('containerVideo');
-            var video = document.getElementById('playerFilme');
+            var img = document.getElementById('imagemTeste');
             
             container.style.display = 'block';
-            video.src = url;
-            video.play();
+            img.src = url;
 
-            // Botão 'Back' (Voltar) do controle da TV fecha o player e limpa a memória
+            // Se apertar o botão 'Back' (Voltar) no controle da TV LG, fecha o teste
             window.addEventListener('keydown', function(e) {
                 if (e.keyCode === 461 || e.key === 'Escape') {
-                    video.pause();
-                    video.src = '';
                     container.style.display = 'none';
+                    img.src = '';
                 }
             });
         }
