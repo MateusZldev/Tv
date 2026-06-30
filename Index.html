@@ -132,9 +132,10 @@
         var hls = null;
         let urlPrincipal = "";
         let urlReserva = "";
+        let bloqueioAtivo = false; // Rastreia se o vídeo está aberto na tela
 
         function prevenirBloqueioMisto(url) {
-            return (url && url.startsWith('http://')) ? url.replace('http://', 'https://');
+            return (url && url.startsWith('http://')) ? url.replace('http://', 'https://') : url;
         }
 
         function prepararFilme(link1, link2) {
@@ -148,7 +149,10 @@
             var container = document.getElementById('containerVideo');
             var video = document.getElementById('playerFilme');
             container.style.display = 'block';
-            video.focus();
+            bloqueioAtivo = true;
+
+            // Cria o ponto de retorno para o celular
+            history.pushState({player: "ativo"}, "");
 
             video.onerror = function() { acionarLinkReserva(); };
 
@@ -169,26 +173,36 @@
             }
         }
 
-        // Bloqueador inteligente para impedir que a TV saia do site ao apertar Voltar
+        // 1. Solução para TV e Computador (Captura o botão físico do controle)
         window.addEventListener('keydown', function(e) {
-            if (e.keyCode === 461 || e.key === 'Escape' || e.key === 'Backspace') {
-                var container = document.getElementById('containerVideo');
-                if (container.style.display === 'block') {
+            var container = document.getElementById('containerVideo');
+            if (container.style.display === 'block') {
+                if (e.keyCode === 461 || e.keyCode === 27) {
                     e.preventDefault();
-                    e.stopPropagation();
-                    fecharPlayerDeVideo();
+                    // Volta o histórico para sincronizar com o celular e fecha o player
+                    if (bloqueioAtivo) { history.back(); }
                 }
             }
-        }, true);
+        });
+
+        // 2. Solução para o Celular (Captura o botão de voltar do sistema Android/iOS)
+        window.addEventListener('popstate', function(event) {
+            if (bloqueioAtivo) {
+                fecharPlayerDeVideo();
+            }
+        });
 
         function fecharPlayerDeVideo() {
             var container = document.getElementById('containerVideo');
             var video = document.getElementById('playerFilme');
-            video.pause();
-            video.src = '';
+            if (video) {
+                video.pause();
+                video.src = '';
+            }
             if (hls) { hls.destroy(); hls = null; }
             container.style.display = 'none';
             document.getElementById('avisoErro').style.display = 'none';
+            bloqueioAtivo = false;
         }
 
         function acionarLinkReserva() {
