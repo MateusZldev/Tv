@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netflix Clone - Rick and Morty</title>
+    <title>Meu Cinema</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         :root {
@@ -35,7 +35,7 @@
             letter-spacing: 1px;
         }
         .banner {
-            height: 45vh;
+            height: 50vh;
             background: linear-gradient(to top, var(--bg-black) 0%, rgba(0,0,0,0.2) 80%), url('https://images.alphacoders.com/886/886472.jpg') no-repeat center center;
             background-size: cover;
             display: flex;
@@ -51,12 +51,12 @@
             background-color: var(--netflix-red);
             color: white;
             border: none;
-            padding: 12px 24px;
-            font-size: 18px;
+            padding: 15px 30px;
+            font-size: 20px;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
-            margin-top: 15px;
+            margin-top: 20px;
             width: fit-content;
             display: flex;
             align-items: center;
@@ -64,33 +64,27 @@
         }
         .btn-live:hover, .btn-live:focus {
             background-color: #b80710;
-            outline: 2px solid white;
+            outline: 3px solid white;
         }
 
-        .content-container { padding: 0 40px 40px 40px; }
-        .section-title { font-size: 22px; color: #fff; margin-top: 30px; margin-bottom: 15px; font-weight: bold;}
-        .selector-container { margin: 20px 0; display: flex; align-items: center; gap: 15px; }
-        select {
-            background: #000; color: #fff; border: 1px solid #333; padding: 10px 20px;
-            font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px;
-        }
-        select:focus { border-color: var(--netflix-red); outline: none; }
+        .content-container { padding: 40px; }
+        .section-title { font-size: 24px; color: #fff; margin-bottom: 20px; font-weight: bold;}
 
         .episodes-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
-            gap: 20px; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 25px; 
         }
         .ep-card {
-            background: var(--card-bg); border-radius: 6px; overflow: hidden; cursor: pointer;
-            transition: transform 0.3s ease, border-color 0.3s ease; border: 2px solid transparent; box-sizing: border-box;
+            background: var(--card-bg); border-radius: 8px; overflow: hidden; cursor: pointer;
+            transition: transform 0.3s ease, border-color 0.3s ease; border: 3px solid transparent; box-sizing: border-box;
         }
         .ep-card:hover, .ep-card:focus { transform: scale(1.05); border-color: #fff; outline: none; }
-        .ep-thumb { width: 100%; height: 135px; background: #222 center center no-repeat; background-size: cover; position: relative; }
-        .play-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 40px; opacity: 0.7; color: #fff; }
-        .ep-info { padding: 12px; }
-        .ep-number { color: var(--netflix-red); font-size: 12px; font-weight: bold; margin: 0; }
-        .ep-title { font-size: 14px; margin: 4px 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; }
+        .ep-thumb { width: 100%; height: 160px; background: #222 center center no-repeat; background-size: cover; position: relative; }
+        .play-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 45px; opacity: 0.8; color: #fff; }
+        .ep-info { padding: 15px; }
+        .ep-number { color: var(--netflix-red); font-size: 13px; font-weight: bold; margin: 0; }
+        .ep-title { font-size: 16px; margin: 5px 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; }
 
         #containerVideo { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; }
         video { width: 100%; height: 100%; }
@@ -102,17 +96,19 @@
     <div class="navbar"><div class="logo">NETFLIX</div></div>
 
     <div class="banner">
-        <h1 class="banner-title">Rick and Morty</h1>
-        <p class="banner-desc">O brilhante cientista beberrão Rick sequestra seu neto adolescente Morty para aventuras frenéticas em mundos e dimensões alternativas.</p>
-        <button class="btn-live" onclick="prepararFilme('https://adultswim-vodlive.cdn.turner.com/live/rick-and-morty/stream.m3u8', '')">
-            🔴 Assistir Canal 24h Ao Vivo
+        <h1 class="banner-title">Rick and Morty (Ao Vivo)</h1>
+        <p class="banner-desc">Assista à maratona contínua de um dos maiores sucessos interdimensionais diretamente no canal de transmissão de 24 horas.</p>
+        
+        <button class="btn-live" onclick="prepararFilme('https://adultswim-vodlive.cdn.turner.com/live/rick-and-morty/stream.m3u8', 'https://lnx.fdpnet.one/rickandmorty/index.m3u8')">
+            🔴 Assistir TV Ao Vivo 24h
         </button>
     </div>
 
     <div class="content-container">
         
-        <div class="section-title">Meus Filmes</div>
+        <div class="section-title">🎬 Meus Filmes e Destaques</div>
         <div class="episodes-grid">
+            
             <div class="ep-card" tabindex="0" onclick="prepararFilme('https://www.googleapis.com/drive/v3/files/1JMsCSCuAJMNxcGzWNcdiFJjIciR_eGq5?key=AIzaSyAHfTjunuAnmyVgGADZo4HD4XN2YAO0MnQ&alt=media', 'https://archive.org/download/filme-anaconda-25/Filme-anaconda25.mp4')">
                 <div class="ep-thumb" style="background-image: url('https://files.catbox.moe/qq4y6i.jpeg')">
                     <div class="play-icon">▶</div>
@@ -122,166 +118,36 @@
                     <p class="ep-title">Anaconda 25</p>
                 </div>
             </div>
-        </div>
 
-        <div class="section-title">Episódios da Série</div>
-        <div class="selector-container">
-            <select id="seasonSelect" onchange="mudarTemporada()">
-                <option value="1">Temporada 1</option>
-                <option value="2">Temporada 2</option>
-                <option value="3">Temporada 3</option>
-                <option value="4">Temporada 4</option>
-                <option value="5">Temporada 5</option>
-                <option value="6">Temporada 6</option>
-                <option value="7">Temporada 7</option>
-            </select>
         </div>
-
-        <div class="episodes-grid" id="gridEpisodios"></div>
     </div>
 
     <div id="containerVideo">
         <video id="playerFilme" controls autoplay></video>
     </div>
     
-    <div id="avisoErro">Link principal falhou! Carregando servidor reserva...</div>
+    <div id="avisoErro">Link principal instável! Carregando servidor reserva...</div>
 
     <script>
-        const database = {
-            1: [
-                { ep: "Ep. 1", title: "Piloto", url: "" },
-                { ep: "Ep. 2", title: "O Cão Cortador de Grama", url: "" },
-                { ep: "Ep. 3", title: "Parque de Anatomia", url: "" },
-                { ep: "Ep. 4", title: "M. Night Shaym-Aliens!", url: "" },
-                { ep: "Ep. 5", title: "A Meeseeks Box", url: "" },
-                { ep: "Ep. 6", title: "A Poção do Rick", url: "" },
-                { ep: "Ep. 7", title: "Criando o Filho do Morty", url: "" },
-                { ep: "Ep. 8", title: "Televisão Interdimensional", url: "" },
-                { ep: "Ep. 9", title: "Algo de Rick Vem Por Aí", url: "" },
-                { ep: "Ep. 10", title: "Contatos Imediatos do Tipo Rick", url: "" },
-                { ep: "Ep. 11", title: "Uma Loucura de Festa", url: "" }
-            ],
-            2: [
-                { ep: "Ep. 1", title: "Um Efeito no Tempo", url: "" },
-                { ep: "Ep. 2", title: "Expresso da Meia-Noite", url: "" },
-                { ep: "Ep. 3", title: "Assimilação de Auto-Amor", url: "" },
-                { ep: "Ep. 4", title: "Total Rickall", url: "" },
-                { ep: "Ep. 5", title: "Mostre-me o que Você Tem", url: "" },
-                { ep: "Ep. 6", title: "Os Ricks Devem Ser Loucos", url: "" },
-                { ep: "Ep. 7", title: "Mini Rick", url: "" },
-                { ep: "Ep. 8", title: "Televisão Interdimensional 2", url: "" },
-                { ep: "Ep. 9", title: "Olha Quem Está Expurgando Agora", url: "" },
-                { ep: "Ep. 10", title: "Casamento de Arromba", url: "" }
-            ],
-            3: [
-                { ep: "Ep. 1", title: "A Redenção do Rick", url: "" },
-                { ep: "Ep. 2", title: "Rickmancing the Stone", url: "" },
-                { ep: "Ep. 3", title: "Rick Pepino", url: "" },
-                { ep: "Ep. 4", title: "Vindecadores 3", url: "" },
-                { ep: "Ep. 5", title: "A Conspiração Whirly Dirly", url: "" },
-                { ep: "Ep. 6", title: "Descanse em Paz e Ricklaxação", url: "" },
-                { ep: "Ep. 7", title: "Contos da Cidadela", url: "" },
-                { ep: "Ep. 8", title: "Os Arquivos de Mente do Morty", url: "" },
-                { ep: "Ep. 9", title: "O ABC do Rick", url: "" },
-                { ep: "Ep. 10", title: "O Rickchuriano Mortydate", url: "" }
-            ],
-            4: [
-                { ep: "Ep. 1", title: "Edge of Tomorty: Rick Die Rickpeat", url: "" },
-                { ep: "Ep. 2", title: "O Velho e o Trono", url: "https://edge1-waw-sprintcdn.r66nv9ed.com/hls2/08/09725/hlgpo5mldle1_h/master.m3u8?t=2b9qbunJZ3OyauNnLWNQYC0nyeDmLkevbHKiLpCvWfw&s=1782793318&e=10800&f=53515443&srv=1075&asn=&sp=4000&p=0" },
-                { ep: "Ep. 3", title: "O Crew do Rick", url: "" },
-                { ep: "Ep. 4", title: "Desejo de Dragão", url: "" },
-                { ep: "Ep. 5", title: "Rattlestar Ricklactica", url: "" },
-                { ep: "Ep. 6", title: "Never Ricking Story", url: "" },
-                { ep: "Ep. 7", title: "Promortyus", url: "" },
-                { ep: "Ep. 8", title: "O Episódio do Tanque de Ácido", url: "" },
-                { ep: "Ep. 9", title: "Filhos de Rick", url: "" },
-                { ep: "Ep. 10", title: "Star Mort: Rickturn of the Jerri", url: "" }
-            ],
-            5: [
-                { ep: "Ep. 1", title: "Mort Jantar com Rick", url: "" },
-                { ep: "Ep. 2", title: "Mortiplicidade", url: "" },
-                { ep: "Ep. 3", title: "Uma Ruína Conveniente", url: "" },
-                { ep: "Ep. 4", title: "Rickdependência Spray", url: "" },
-                { ep: "Ep. 5", title: "Amortcan Grickfitti", url: "" },
-                { ep: "Ep. 6", title: "Rick & Morty: Desbravadores do Espaço", url: "" },
-                { ep: "Ep. 7", title: "Gotron Jerrysis Rickvangelion", url: "" },
-                { ep: "Ep. 8", title: "Rickternal Friendshine", url: "" },
-                { ep: "Ep. 9", title: "Forgetting Sarick Mortshall", url: "" },
-                { ep: "Ep. 10", title: "Rickmurai Jack", url: "" }
-            ],
-            6: [
-                { ep: "Ep. 1", title: "Solaricks", url: "" },
-                { ep: "Ep. 2", title: "Rick: Mort Bem Vivido", url: "" },
-                { ep: "Ep. 3", title: "Beth de Família", url: "" },
-                { ep: "Ep. 4", title: "Família Noturna", url: "" },
-                { ep: "Ep. 5", title: "Desespero de Chat", url: "" },
-                { ep: "Ep. 6", title: "JuRicking Park", url: "" },
-                { ep: "Ep. 7", title: "Full Meta Jackrick", url: "" },
-                { ep: "Ep. 8", title: "Analise Isso", url: "" },
-                { ep: "Ep. 9", title: "Um Rick no Rei Mortur", url: "" },
-                { ep: "Ep. 10", title: "O Natal do Rick", url: "" }
-            ],
-            7: [
-                { ep: "Ep. 1", title: "Como o Poopy Recuperou o Seu Rebolado", url: "" },
-                { ep: "Ep. 2", title: "A Armadilha do Jerr", url: "" },
-                { ep: "Ep. 3", title: "Air Force Wong", url: "" },
-                { ep: "Ep. 4", title: "A Que Fritura Saborosa", url: "" },
-                { ep: "Ep. 5", title: "O Crepúsculo dos Ricks", url: "" },
-                { ep: "Ep. 6", title: "Rickfending Your Mort", url: "" },
-                { ep: "Ep. 7", title: "Wet Kuat Amortican Summer", url: "" },
-                { ep: "Ep. 8", title: "A Ascensão dos Numbericon", url: "" },
-                { ep: "Ep. 9", title: "A Idade do Mort", url: "" },
-                { ep: "Ep. 10", title: "Não Tema o Ceifador", url: "" }
-            ]
-        };
-
         var hls = null;
         let urlPrincipal = "";
         let urlReserva = "";
 
-        function mudarTemporada() {
-            const season = document.getElementById('seasonSelect').value;
-            const grid = document.getElementById('gridEpisodios');
-            grid.innerHTML = '';
-
-            database[season].forEach(episode => {
-                const card = document.createElement('div');
-                card.className = 'ep-card';
-                card.tabIndex = 0;
-                
-                card.innerHTML = `
-                    <div class="ep-thumb" style="background-image: url('https://images.alphacoders.com/886/886472.jpg')">
-                        <div class="play-icon">▶</div>
-                    </div>
-                    <div class="ep-info">
-                        <p class="ep-number">${episode.ep}</p>
-                        <p class="ep-title">${episode.title}</p>
-                    </div>
-                `;
-
-                card.onclick = function() {
-                    if(episode.url === "") {
-                        alert("Por segurança de link expirado, preencha o link gerado para este episódio no seu código do GitHub!");
-                    } else {
-                        prepararFilme(episode.url, '');
-                    }
-                };
-
-                card.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') { card.click(); }
-                });
-
-                grid.appendChild(card);
-            });
+        function prevenirBloqueioMisto(url) {
+            if (url && url.startsWith('http://')) {
+                return url.replace('http://', 'https://');
+            }
+            return url;
         }
 
         function prepararFilme(link1, link2) {
-            urlPrincipal = link1;
-            urlReserva = link2;
+            urlPrincipal = prevenirBloqueioMisto(link1);
+            urlReserva = prevenirBloqueioMisto(link2);
             iniciarVideo(urlPrincipal);
         }
 
         function iniciarVideo(url) {
+            if (!url) return;
             var container = document.getElementById('containerVideo');
             var video = document.getElementById('playerFilme');
             container.style.display = 'block';
@@ -295,7 +161,10 @@
                     hls.loadSource(url);
                     hls.attachMedia(video);
                     hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
-                    hls.on(Hls.Events.ERROR, function(e, data) { if(data.fatal) acionarLinkReserva(); });
+                    
+                    hls.on(Hls.Events.ERROR, function(e, data) { 
+                        if(data.fatal) acionarLinkReserva(); 
+                    });
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                     video.src = url; video.play();
                 }
@@ -309,6 +178,7 @@
                     video.pause(); video.src = '';
                     if (hls) { hls.destroy(); hls = null; }
                     container.style.display = 'none';
+                    document.getElementById('avisoErro').style.display = 'none';
                 }
             });
         }
@@ -318,11 +188,12 @@
                 var aviso = document.getElementById('avisoErro');
                 aviso.style.display = 'block';
                 setTimeout(function() { aviso.style.display = 'none'; }, 4000);
-                let backup = urlReserva; urlReserva = ""; iniciarVideo(backup);
+                
+                let backup = urlReserva; 
+                urlReserva = ""; 
+                iniciarVideo(backup);
             }
         }
-
-        mudarTemporada();
     </script>
 </body>
 </html>
