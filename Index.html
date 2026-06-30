@@ -3,176 +3,326 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Cinema e IPTV</title>
+    <title>Netflix Clone - Rick and Morty</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
+        :root {
+            --netflix-red: #E50914;
+            --bg-black: #141414;
+            --card-bg: #181818;
+        }
         body { 
-            background: #121212; 
+            background-color: var(--bg-black); 
             color: #fff; 
-            text-align: center; 
-            font-family: Arial, sans-serif; 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            overflow-x: hidden;
         }
-        h1 { font-size: 28px; color: #0084ff; margin-bottom: 5px; }
-        h2 { font-size: 20px; color: #aaa; margin-top: 20px; }
-        
-        .grade { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-            gap: 15px; 
-            max-width: 1000px; 
-            margin: 20px auto; 
-            padding: 0 10px; 
-        }
-        
-        .btn { 
-            display: block; 
-            width: 100%; 
-            padding: 20px; 
-            background: #1e1e1e; 
-            color: white; 
-            border-radius: 10px; 
-            font-size: 18px; 
-            font-weight: bold;
-            border: 3px solid #444; 
-            cursor: pointer;
+        .navbar {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0; width: 100%; z-index: 10;
             box-sizing: border-box;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
         }
-        .btn:hover, .btn:focus { 
-            border-color: #0084ff; 
-            background: #0056b3; 
-            outline: none;
+        .logo {
+            color: var(--netflix-red);
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .banner {
+            height: 45vh;
+            background: linear-gradient(to top, var(--bg-black) 0%, rgba(0,0,0,0.2) 80%), url('https://images.alphacoders.com/886/886472.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+        .banner-title { font-size: 42px; margin: 0; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+        .banner-desc { font-size: 16px; max-width: 600px; color: #cccccc; margin-top: 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
+
+        .btn-live {
+            background-color: var(--netflix-red);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+            width: fit-content;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-live:hover, .btn-live:focus {
+            background-color: #b80710;
+            outline: 2px solid white;
         }
 
-        #containerVideo {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background: #000;
-            z-index: 9999;
+        .content-container { padding: 0 40px 40px 40px; }
+        .section-title { font-size: 22px; color: #fff; margin-top: 30px; margin-bottom: 15px; font-weight: bold;}
+        .selector-container { margin: 20px 0; display: flex; align-items: center; gap: 15px; }
+        select {
+            background: #000; color: #fff; border: 1px solid #333; padding: 10px 20px;
+            font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px;
         }
+        select:focus { border-color: var(--netflix-red); outline: none; }
+
+        .episodes-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
+            gap: 20px; 
+        }
+        .ep-card {
+            background: var(--card-bg); border-radius: 6px; overflow: hidden; cursor: pointer;
+            transition: transform 0.3s ease, border-color 0.3s ease; border: 2px solid transparent; box-sizing: border-box;
+        }
+        .ep-card:hover, .ep-card:focus { transform: scale(1.05); border-color: #fff; outline: none; }
+        .ep-thumb { width: 100%; height: 135px; background: #222 center center no-repeat; background-size: cover; position: relative; }
+        .play-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 40px; opacity: 0.7; color: #fff; }
+        .ep-info { padding: 12px; }
+        .ep-number { color: var(--netflix-red); font-size: 12px; font-weight: bold; margin: 0; }
+        .ep-title { font-size: 14px; margin: 4px 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; }
+
+        #containerVideo { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; }
         video { width: 100%; height: 100%; }
-        
-        #listaCanais {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 2px solid #333;
-            background: #151515;
-            border-radius: 10px;
-        }
+        #avisoErro { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 0, 0, 0.8); color: white; padding: 10px 20px; border-radius: 5px; display: none; z-index: 10000; }
     </style>
 </head>
 <body>
 
-    <div id="conteudoPrincipal">
-        <h1>🍿 Meu Centro de Mídia</h1>
-        <p>Use o controle remoto para selecionar</p>
+    <div class="navbar"><div class="logo">NETFLIX</div></div>
+
+    <div class="banner">
+        <h1 class="banner-title">Rick and Morty</h1>
+        <p class="banner-desc">O brilhante cientista beberrão Rick sequestra seu neto adolescente Morty para aventuras frenéticas em mundos e dimensões alternativas.</p>
+        <button class="btn-live" onclick="prepararFilme('https://adultswim-vodlive.cdn.turner.com/live/rick-and-morty/stream.m3u8', '')">
+            🔴 Assistir Canal 24h Ao Vivo
+        </button>
+    </div>
+
+    <div class="content-container">
         
-        <h2>🎬 Filmes</h2>
-        <div class="grade">
-            <button class="btn" onclick="iniciarVideo('https://archive.org/download/filme-anaconda-25/Filme-anaconda25.mp4')">
-                Anaconda
-            </button>
+        <div class="section-title">Meus Filmes</div>
+        <div class="episodes-grid">
+            <div class="ep-card" tabindex="0" onclick="prepararFilme('https://www.googleapis.com/drive/v3/files/1JMsCSCuAJMNxcGzWNcdiFJjIciR_eGq5?key=AIzaSyAHfTjunuAnmyVgGADZo4HD4XN2YAO0MnQ&alt=media', 'https://archive.org/download/filme-anaconda-25/Filme-anaconda25.mp4')">
+                <div class="ep-thumb" style="background-image: url('https://files.catbox.moe/qq4y6i.jpeg')">
+                    <div class="play-icon">▶</div>
+                </div>
+                <div class="ep-info">
+                    <p class="ep-number">Filme Completo</p>
+                    <p class="ep-title">Anaconda 25</p>
+                </div>
+            </div>
         </div>
 
-        <h2>📺 Canais de TV (IPTV Live)</h2>
-        <div class="grade" id="listaCanais">
-            <p id="carregando" style="grid-column: 1/-1; padding: 20px;">Carregando lista de canais...</p>
+        <div class="section-title">Episódios da Série</div>
+        <div class="selector-container">
+            <select id="seasonSelect" onchange="mudarTemporada()">
+                <option value="1">Temporada 1</option>
+                <option value="2">Temporada 2</option>
+                <option value="3">Temporada 3</option>
+                <option value="4">Temporada 4</option>
+                <option value="5">Temporada 5</option>
+                <option value="6">Temporada 6</option>
+                <option value="7">Temporada 7</option>
+            </select>
         </div>
+
+        <div class="episodes-grid" id="gridEpisodios"></div>
     </div>
 
     <div id="containerVideo">
         <video id="playerFilme" controls autoplay></video>
     </div>
+    
+    <div id="avisoErro">Link principal falhou! Carregando servidor reserva...</div>
 
     <script>
-        var hls = null;
+        const database = {
+            1: [
+                { ep: "Ep. 1", title: "Piloto", url: "" },
+                { ep: "Ep. 2", title: "O Cão Cortador de Grama", url: "" },
+                { ep: "Ep. 3", title: "Parque de Anatomia", url: "" },
+                { ep: "Ep. 4", title: "M. Night Shaym-Aliens!", url: "" },
+                { ep: "Ep. 5", title: "A Meeseeks Box", url: "" },
+                { ep: "Ep. 6", title: "A Poção do Rick", url: "" },
+                { ep: "Ep. 7", title: "Criando o Filho do Morty", url: "" },
+                { ep: "Ep. 8", title: "Televisão Interdimensional", url: "" },
+                { ep: "Ep. 9", title: "Algo de Rick Vem Por Aí", url: "" },
+                { ep: "Ep. 10", title: "Contatos Imediatos do Tipo Rick", url: "" },
+                { ep: "Ep. 11", title: "Uma Loucura de Festa", url: "" }
+            ],
+            2: [
+                { ep: "Ep. 1", title: "Um Efeito no Tempo", url: "" },
+                { ep: "Ep. 2", title: "Expresso da Meia-Noite", url: "" },
+                { ep: "Ep. 3", title: "Assimilação de Auto-Amor", url: "" },
+                { ep: "Ep. 4", title: "Total Rickall", url: "" },
+                { ep: "Ep. 5", title: "Mostre-me o que Você Tem", url: "" },
+                { ep: "Ep. 6", title: "Os Ricks Devem Ser Loucos", url: "" },
+                { ep: "Ep. 7", title: "Mini Rick", url: "" },
+                { ep: "Ep. 8", title: "Televisão Interdimensional 2", url: "" },
+                { ep: "Ep. 9", title: "Olha Quem Está Expurgando Agora", url: "" },
+                { ep: "Ep. 10", title: "Casamento de Arromba", url: "" }
+            ],
+            3: [
+                { ep: "Ep. 1", title: "A Redenção do Rick", url: "" },
+                { ep: "Ep. 2", title: "Rickmancing the Stone", url: "" },
+                { ep: "Ep. 3", title: "Rick Pepino", url: "" },
+                { ep: "Ep. 4", title: "Vindecadores 3", url: "" },
+                { ep: "Ep. 5", title: "A Conspiração Whirly Dirly", url: "" },
+                { ep: "Ep. 6", title: "Descanse em Paz e Ricklaxação", url: "" },
+                { ep: "Ep. 7", title: "Contos da Cidadela", url: "" },
+                { ep: "Ep. 8", title: "Os Arquivos de Mente do Morty", url: "" },
+                { ep: "Ep. 9", title: "O ABC do Rick", url: "" },
+                { ep: "Ep. 10", title: "O Rickchuriano Mortydate", url: "" }
+            ],
+            4: [
+                { ep: "Ep. 1", title: "Edge of Tomorty: Rick Die Rickpeat", url: "" },
+                { ep: "Ep. 2", title: "O Velho e o Trono", url: "https://edge1-waw-sprintcdn.r66nv9ed.com/hls2/08/09725/hlgpo5mldle1_h/master.m3u8?t=2b9qbunJZ3OyauNnLWNQYC0nyeDmLkevbHKiLpCvWfw&s=1782793318&e=10800&f=53515443&srv=1075&asn=&sp=4000&p=0" },
+                { ep: "Ep. 3", title: "O Crew do Rick", url: "" },
+                { ep: "Ep. 4", title: "Desejo de Dragão", url: "" },
+                { ep: "Ep. 5", title: "Rattlestar Ricklactica", url: "" },
+                { ep: "Ep. 6", title: "Never Ricking Story", url: "" },
+                { ep: "Ep. 7", title: "Promortyus", url: "" },
+                { ep: "Ep. 8", title: "O Episódio do Tanque de Ácido", url: "" },
+                { ep: "Ep. 9", title: "Filhos de Rick", url: "" },
+                { ep: "Ep. 10", title: "Star Mort: Rickturn of the Jerri", url: "" }
+            ],
+            5: [
+                { ep: "Ep. 1", title: "Mort Jantar com Rick", url: "" },
+                { ep: "Ep. 2", title: "Mortiplicidade", url: "" },
+                { ep: "Ep. 3", title: "Uma Ruína Conveniente", url: "" },
+                { ep: "Ep. 4", title: "Rickdependência Spray", url: "" },
+                { ep: "Ep. 5", title: "Amortcan Grickfitti", url: "" },
+                { ep: "Ep. 6", title: "Rick & Morty: Desbravadores do Espaço", url: "" },
+                { ep: "Ep. 7", title: "Gotron Jerrysis Rickvangelion", url: "" },
+                { ep: "Ep. 8", title: "Rickternal Friendshine", url: "" },
+                { ep: "Ep. 9", title: "Forgetting Sarick Mortshall", url: "" },
+                { ep: "Ep. 10", title: "Rickmurai Jack", url: "" }
+            ],
+            6: [
+                { ep: "Ep. 1", title: "Solaricks", url: "" },
+                { ep: "Ep. 2", title: "Rick: Mort Bem Vivido", url: "" },
+                { ep: "Ep. 3", title: "Beth de Família", url: "" },
+                { ep: "Ep. 4", title: "Família Noturna", url: "" },
+                { ep: "Ep. 5", title: "Desespero de Chat", url: "" },
+                { ep: "Ep. 6", title: "JuRicking Park", url: "" },
+                { ep: "Ep. 7", title: "Full Meta Jackrick", url: "" },
+                { ep: "Ep. 8", title: "Analise Isso", url: "" },
+                { ep: "Ep. 9", title: "Um Rick no Rei Mortur", url: "" },
+                { ep: "Ep. 10", title: "O Natal do Rick", url: "" }
+            ],
+            7: [
+                { ep: "Ep. 1", title: "Como o Poopy Recuperou o Seu Rebolado", url: "" },
+                { ep: "Ep. 2", title: "A Armadilha do Jerr", url: "" },
+                { ep: "Ep. 3", title: "Air Force Wong", url: "" },
+                { ep: "Ep. 4", title: "A Que Fritura Saborosa", url: "" },
+                { ep: "Ep. 5", title: "O Crepúsculo dos Ricks", url: "" },
+                { ep: "Ep. 6", title: "Rickfending Your Mort", url: "" },
+                { ep: "Ep. 7", title: "Wet Kuat Amortican Summer", url: "" },
+                { ep: "Ep. 8", title: "A Ascensão dos Numbericon", url: "" },
+                { ep: "Ep. 9", title: "A Idade do Mort", url: "" },
+                { ep: "Ep. 10", title: "Não Tema o Ceifador", url: "" }
+            ]
+        };
 
-        // Função para carregar e processar a lista .m3u
-        async function carregarIPTV() {
-            const urlM3U = 'https://iptv-org.github.io/iptv/index.m3u';
-            const containerCanais = document.getElementById('listaCanais');
-            
-            try {
-                const resposta = await fetch(urlM3U);
-                const texto = await resposta.text();
+        var hls = null;
+        let urlPrincipal = "";
+        let urlReserva = "";
+
+        function mudarTemporada() {
+            const season = document.getElementById('seasonSelect').value;
+            const grid = document.getElementById('gridEpisodios');
+            grid.innerHTML = '';
+
+            database[season].forEach(episode => {
+                const card = document.createElement('div');
+                card.className = 'ep-card';
+                card.tabIndex = 0;
                 
-                // Limpa o aviso de carregando
-                containerCanais.innerHTML = '';
-                
-                const linhas = texto.split('\n');
-                let nomeCanal = '';
-                
-                // Vasculha o arquivo procurando os canais e os links
-                for (let i = 0; i < linhas.length; i++) {
-                    let linha = linhas[i].trim();
-                    
-                    if (linha.startsWith('#EXTINF:')) {
-                        // Pega o nome do canal que fica depois da vírgula
-                        const partes = linha.split(',');
-                        nomeCanal = partes[partes.length - 1] || 'Canal Sem Nome';
-                    } else if (linha.startsWith('http')) {
-                        // Encontrou o link do canal, cria o botão na tela
-                        const urlCanal = linha;
-                        
-                        const botao = document.createElement('button');
-                        botao.className = 'btn';
-                        botao.innerText = '📺 ' + nomeCanal;
-                        botao.onclick = function() { iniciarVideo(urlCanal); };
-                        
-                        containerCanais.appendChild(botao);
+                card.innerHTML = `
+                    <div class="ep-thumb" style="background-image: url('https://images.alphacoders.com/886/886472.jpg')">
+                        <div class="play-icon">▶</div>
+                    </div>
+                    <div class="ep-info">
+                        <p class="ep-number">${episode.ep}</p>
+                        <p class="ep-title">${episode.title}</p>
+                    </div>
+                `;
+
+                card.onclick = function() {
+                    if(episode.url === "") {
+                        alert("Por segurança de link expirado, preencha o link gerado para este episódio no seu código do GitHub!");
+                    } else {
+                        prepararFilme(episode.url, '');
                     }
-                }
-            } catch (erro) {
-                containerCanais.innerHTML = '<p style="grid-column: 1/-1; color: red;">Erro ao carregar os canais.</p>';
-                console.error(erro);
-            }
+                };
+
+                card.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') { card.click(); }
+                });
+
+                grid.appendChild(card);
+            });
+        }
+
+        function prepararFilme(link1, link2) {
+            urlPrincipal = link1;
+            urlReserva = link2;
+            iniciarVideo(urlPrincipal);
         }
 
         function iniciarVideo(url) {
             var container = document.getElementById('containerVideo');
             var video = document.getElementById('playerFilme');
-            
             container.style.display = 'block';
 
-            // Canais ao vivo geralmente usam formatos de transmissão (.m3u8 ou streams sem extensão)
-            if (url.includes('.m3u8') || url.includes('master') || !url.includes('.mp4')) {
+            video.onerror = function() { acionarLinkReserva(); };
+
+            if (url.includes('.m3u8') || !url.includes('.mp4')) {
                 if (Hls.isSupported()) {
                     if (hls) { hls.destroy(); }
                     hls = new Hls();
                     hls.loadSource(url);
                     hls.attachMedia(video);
-                    hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                        video.play();
-                    });
+                    hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
+                    hls.on(Hls.Events.ERROR, function(e, data) { if(data.fatal) acionarLinkReserva(); });
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = url;
-                    video.play();
+                    video.src = url; video.play();
                 }
             } else {
                 if (hls) { hls.destroy(); hls = null; }
-                video.src = url;
-                video.play();
+                video.src = url; video.play();
             }
 
-            // Botão 'Back' (Voltar) do controle remoto fecha o player
             window.addEventListener('keydown', function(e) {
                 if (e.keyCode === 461 || e.key === 'Escape') {
-                    video.pause();
-                    video.src = '';
+                    video.pause(); video.src = '';
                     if (hls) { hls.destroy(); hls = null; }
                     container.style.display = 'none';
                 }
             });
         }
 
-        // Inicializa a lista de canais assim que a página abre
-        carregarIPTV();
+        function acionarLinkReserva() {
+            if (urlReserva) {
+                var aviso = document.getElementById('avisoErro');
+                aviso.style.display = 'block';
+                setTimeout(function() { aviso.style.display = 'none'; }, 4000);
+                let backup = urlReserva; urlReserva = ""; iniciarVideo(backup);
+            }
+        }
+
+        mudarTemporada();
     </script>
 </body>
 </html>
