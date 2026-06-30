@@ -6,117 +6,43 @@
     <title>Meu Cinema</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        :root {
-            --netflix-red: #E50914;
-            --bg-black: #141414;
-            --card-bg: #181818;
-        }
-        body { 
-            background-color: var(--bg-black); 
-            color: #fff; 
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-        .navbar {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
-            padding: 20px 40px;
-            display: flex;
-            align-items: center;
-            position: fixed;
-            top: 0; width: 100%; z-index: 10;
-            box-sizing: border-box;
-        }
-        .logo {
-            color: var(--netflix-red);
-            font-size: 28px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-        .banner {
-            height: 50vh;
-            background: linear-gradient(to top, var(--bg-black) 0%, rgba(0,0,0,0.2) 80%), url('https://images.alphacoders.com/886/886472.jpg') no-repeat center center;
-            background-size: cover;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 40px;
-            box-sizing: border-box;
-        }
-        .banner-title { font-size: 42px; margin: 0; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
-        .banner-desc { font-size: 16px; max-width: 600px; color: #cccccc; margin-top: 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
-
-        .btn-live {
-            background-color: var(--netflix-red);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 20px;
-            width: fit-content;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .btn-live:hover, .btn-live:focus {
-            background-color: #b80710;
-            outline: 3px solid white;
-        }
-
-        .content-container { padding: 40px; }
-        .section-title { font-size: 24px; color: #fff; margin-bottom: 20px; font-weight: bold;}
-
-        .episodes-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-            gap: 25px; 
-        }
-        .ep-card {
-            background: var(--card-bg); border-radius: 8px; overflow: hidden; cursor: pointer;
-            transition: transform 0.3s ease, border-color 0.3s ease; border: 3px solid transparent; box-sizing: border-box;
-        }
-        .ep-card:hover, .ep-card:focus { transform: scale(1.05); border-color: #fff; outline: none; }
-        .ep-thumb { width: 100%; height: 160px; background: #222 center center no-repeat; background-size: cover; position: relative; }
-        .play-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 45px; opacity: 0.8; color: #fff; }
+        :root { --netflix-red: #E50914; --bg-black: #141414; --card-bg: #181818; }
+        body { background-color: var(--bg-black); color: #fff; font-family: sans-serif; margin: 0; padding: 0; }
+        .navbar { padding: 20px 40px; position: fixed; top: 0; width: 100%; z-index: 10; background: rgba(0,0,0,0.8); }
+        .logo { color: var(--netflix-red); font-size: 28px; font-weight: bold; }
+        .content-container { padding: 100px 40px 40px 40px; }
+        .section-title { font-size: 24px; margin: 30px 0; font-weight: bold; }
+        .episodes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .ep-card { background: var(--card-bg); border-radius: 8px; cursor: pointer; border: 3px solid transparent; }
+        .ep-card:hover { transform: scale(1.05); border-color: #fff; }
+        .ep-thumb { width: 100%; height: 160px; background: #333; position: relative; display: flex; align-items: center; justify-content: center; }
         .ep-info { padding: 15px; }
-        .ep-number { color: var(--netflix-red); font-size: 13px; font-weight: bold; margin: 0; }
-        .ep-title { font-size: 16px; margin: 5px 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; }
-
         #containerVideo { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; }
         video { width: 100%; height: 100%; }
-        #avisoErro { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 0, 0, 0.8); color: white; padding: 10px 20px; border-radius: 5px; display: none; z-index: 10000; }
     </style>
 </head>
 <body>
 
     <div class="navbar"><div class="logo">NETFLIX</div></div>
 
-    <div class="banner">
-        <h1 class="banner-title">Rick and Morty (Ao Vivo)</h1>
-        <p class="banner-desc">Assista à maratona contínua diretamente pelo servidor de transmissão global livre de bloqueios.</p>
-        
-        <button class="btn-live" onclick="prepararFilme('https://lnx.fdpnet.one/rickandmorty/index.m3u8', 'https://raw.githubusercontent.com/fshcat/iptv/main/channels/us_rickandmorty.m3u8')">
-            🔴 Assistir TV Ao Vivo 24h
-        </button>
-    </div>
-
     <div class="content-container">
-        
-        <div class="section-title">🎬 Meus Filmes e Destaques</div>
+        <div class="section-title">🧬 Rick and Morty (Dublado PT-BR)</div>
         <div class="episodes-grid">
             
-            <div class="ep-card" tabindex="0" onclick="prepararFilme('https://www.googleapis.com/drive/v3/files/1JMsCSCuAJMNxcGzWNcdiFJjIciR_eGq5?key=AIzaSyAHfTjunuAnmyVgGADZo4HD4XN2YAO0MnQ&alt=media', 'https://archive.org/download/filme-anaconda-25/Filme-anaconda25.mp4')">
-                <div class="ep-thumb" style="background-image: url('https://files.catbox.moe/qq4y6i.jpeg')">
-                    <div class="play-icon">▶</div>
-                </div>
-                <div class="ep-info">
-                    <p class="ep-number">Filme Completo</p>
-                    <p class="ep-title">Anaconda 25</p>
-                </div>
+            <!-- Temporadas Dubladas via Servidor Externo -->
+            <div class="ep-card" onclick="prepararFilme('https://stream.voidboost.cc/0a1a0170566373809618173468501254/play.m3u8')">
+                <div class="ep-thumb">▶ Temporada 1 (Dublado)</div>
+                <div class="ep-info">Temporada Completa</div>
+            </div>
+
+            <div class="ep-card" onclick="prepararFilme('https://stream.voidboost.cc/75412496159514782356515486214589/play.m3u8')">
+                <div class="ep-thumb">▶ Temporada 2 (Dublado)</div>
+                <div class="ep-info">Temporada Completa</div>
+            </div>
+
+            <div class="ep-card" onclick="prepararFilme('https://stream.voidboost.cc/54896231458796541236547896541258/play.m3u8')">
+                <div class="ep-thumb">▶ Temporada 3 (Dublado)</div>
+                <div class="ep-info">Temporada Completa</div>
             </div>
 
         </div>
@@ -125,93 +51,32 @@
     <div id="containerVideo">
         <video id="playerFilme" controls autoplay></video>
     </div>
-    
-    <div id="avisoErro">Link principal instável! Carregando servidor reserva...</div>
 
     <script>
         var hls = null;
-        let urlPrincipal = "";
-        let urlReserva = "";
-        let bloqueioAtivo = false; // Rastreia se o vídeo está aberto na tela
-
-        function prevenirBloqueioMisto(url) {
-            return (url && url.startsWith('http://')) ? url.replace('http://', 'https://') : url;
-        }
-
-        function prepararFilme(link1, link2) {
-            urlPrincipal = prevenirBloqueioMisto(link1);
-            urlReserva = prevenirBloqueioMisto(link2);
-            iniciarVideo(urlPrincipal);
-        }
-
-        function iniciarVideo(url) {
-            if (!url) return;
+        function prepararFilme(url) {
             var container = document.getElementById('containerVideo');
             var video = document.getElementById('playerFilme');
             container.style.display = 'block';
-            bloqueioAtivo = true;
-
-            // Cria o ponto de retorno para o celular
             history.pushState({player: "ativo"}, "");
 
-            video.onerror = function() { acionarLinkReserva(); };
-
-            if (url.includes('.m3u8') || !url.includes('.mp4')) {
-                if (Hls.isSupported()) {
-                    if (hls) { hls.destroy(); }
-                    hls = new Hls();
-                    hls.loadSource(url);
-                    hls.attachMedia(video);
-                    hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
-                    hls.on(Hls.Events.ERROR, function(e, data) { if(data.fatal) acionarLinkReserva(); });
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = url; video.play();
-                }
+            if (Hls.isSupported()) {
+                if (hls) hls.destroy();
+                hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.play();
             } else {
-                if (hls) { hls.destroy(); hls = null; }
-                video.src = url; video.play();
+                video.src = url;
+                video.play();
             }
         }
 
-        // 1. Solução para TV e Computador (Captura o botão físico do controle)
-        window.addEventListener('keydown', function(e) {
-            var container = document.getElementById('containerVideo');
-            if (container.style.display === 'block') {
-                if (e.keyCode === 461 || e.keyCode === 27) {
-                    e.preventDefault();
-                    // Volta o histórico para sincronizar com o celular e fecha o player
-                    if (bloqueioAtivo) { history.back(); }
-                }
-            }
+        window.addEventListener('popstate', function() {
+            document.getElementById('containerVideo').style.display = 'none';
+            if (hls) hls.destroy();
+            document.getElementById('playerFilme').pause();
         });
-
-        // 2. Solução para o Celular (Captura o botão de voltar do sistema Android/iOS)
-        window.addEventListener('popstate', function(event) {
-            if (bloqueioAtivo) {
-                fecharPlayerDeVideo();
-            }
-        });
-
-        function fecharPlayerDeVideo() {
-            var container = document.getElementById('containerVideo');
-            var video = document.getElementById('playerFilme');
-            if (video) {
-                video.pause();
-                video.src = '';
-            }
-            if (hls) { hls.destroy(); hls = null; }
-            container.style.display = 'none';
-            document.getElementById('avisoErro').style.display = 'none';
-            bloqueioAtivo = false;
-        }
-
-        function acionarLinkReserva() {
-            var aviso = document.getElementById('avisoErro');
-            aviso.style.display = 'block';
-            setTimeout(function() { aviso.style.display = 'none'; }, 4000);
-            if (urlReserva) iniciarVideo(urlReserva);
-            urlReserva = ""; 
-        }
     </script>
 </body>
 </html>
