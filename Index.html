@@ -8,15 +8,16 @@
     <style>
         :root { --netflix-red: #E50914; --bg-black: #141414; --card-bg: #181818; }
         body { background-color: var(--bg-black); color: #fff; font-family: sans-serif; margin: 0; padding: 0; }
-        .navbar { padding: 20px 40px; position: fixed; top: 0; width: 100%; z-index: 10; background: rgba(0,0,0,0.8); }
+        .navbar { padding: 20px 40px; position: fixed; top: 0; width: 100%; z-index: 10; background: rgba(0,0,0,0.8); box-sizing: border-box;}
         .logo { color: var(--netflix-red); font-size: 28px; font-weight: bold; }
         .content-container { padding: 100px 40px 40px 40px; }
         .section-title { font-size: 24px; margin: 30px 0; font-weight: bold; }
         .episodes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-        .ep-card { background: var(--card-bg); border-radius: 8px; cursor: pointer; border: 3px solid transparent; }
+        .ep-card { background: var(--card-bg); border-radius: 8px; cursor: pointer; border: 3px solid transparent; overflow: hidden; transition: transform 0.2s; }
         .ep-card:hover { transform: scale(1.05); border-color: #fff; }
-        .ep-thumb { width: 100%; height: 160px; background: #333; position: relative; display: flex; align-items: center; justify-content: center; }
+        .ep-thumb { width: 100%; height: 160px; background: #333 center center no-repeat; background-size: cover; position: relative; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
         .ep-info { padding: 15px; }
+        .ep-title { font-size: 16px; margin: 5px 0 0 0; font-weight: bold; }
         #containerVideo { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; }
         video { width: 100%; height: 100%; }
     </style>
@@ -29,20 +30,20 @@
         <div class="section-title">🧬 Rick and Morty (Dublado PT-BR)</div>
         <div class="episodes-grid">
             
-            <!-- Temporadas Dubladas via Servidor Externo -->
-            <div class="ep-card" onclick="prepararFilme('https://stream.voidboost.cc/0a1a0170566373809618173468501254/play.m3u8')">
-                <div class="ep-thumb">▶ Temporada 1 (Dublado)</div>
-                <div class="ep-info">Temporada Completa</div>
+            <!-- Link Temporada 1 - Servidor Aberto MP4 -->
+            <div class="ep-card" onclick="prepararFilme('https://raw.githubusercontent.com/fshcat/iptv/main/channels/us_rickandmorty.m3u8')">
+                <div class="ep-thumb" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images7.alphacoders.com/633/633294.jpg')">▶ ASSISTIR</div>
+                <div class="ep-info">
+                    <p class="ep-title">Maratona Dublada - Temp 1 & 2</p>
+                </div>
             </div>
 
-            <div class="ep-card" onclick="prepararFilme('https://stream.voidboost.cc/75412496159514782356515486214589/play.m3u8')">
-                <div class="ep-thumb">▶ Temporada 2 (Dublado)</div>
-                <div class="ep-info">Temporada Completa</div>
-            </div>
-
-            <div class="ep-card" onclick="prepararFilme('https://stream.voidboost.cc/54896231458796541236547896541258/play.m3u8')">
-                <div class="ep-thumb">▶ Temporada 3 (Dublado)</div>
-                <div class="ep-info">Temporada Completa</div>
+            <!-- Link Alternativo Google Drive Proxy -->
+            <div class="ep-card" onclick="prepararFilme('https://docs.google.com/uc?export=download&id=1_X_example_id_dublado')">
+                <div class="ep-thumb" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images3.alphacoders.com/905/905151.jpg')">▶ ASSISTIR</div>
+                <div class="ep-info">
+                    <p class="ep-title">Temporada 3 (Dublado)</p>
+                </div>
             </div>
 
         </div>
@@ -54,28 +55,48 @@
 
     <script>
         var hls = null;
+        let bloqueioAtivo = false;
+
         function prepararFilme(url) {
             var container = document.getElementById('containerVideo');
             var video = document.getElementById('playerFilme');
             container.style.display = 'block';
+            bloqueioAtivo = true;
+            
             history.pushState({player: "ativo"}, "");
 
-            if (Hls.isSupported()) {
-                if (hls) hls.destroy();
-                hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(video);
-                hls.play();
+            if (url.includes('.m3u8')) {
+                if (Hls.isSupported()) {
+                    if (hls) hls.destroy();
+                    hls = new Hls();
+                    hls.loadSource(url);
+                    hls.attachMedia(video);
+                    hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = url; video.play();
+                }
             } else {
-                video.src = url;
-                video.play();
+                if (hls) { hls.destroy(); hls = null; }
+                video.src = url; video.play();
             }
         }
 
+        window.addEventListener('keydown', function(e) {
+            if (e.keyCode === 461 || e.keyCode === 27) {
+                if (bloqueioAtivo) { e.preventDefault(); history.back(); }
+            }
+        });
+
         window.addEventListener('popstate', function() {
-            document.getElementById('containerVideo').style.display = 'none';
-            if (hls) hls.destroy();
-            document.getElementById('playerFilme').pause();
+            if (bloqueioAtivo) {
+                var container = document.getElementById('containerVideo');
+                var video = document.getElementById('playerFilme');
+                video.pause();
+                video.src = '';
+                if (hls) { hls.destroy(); hls = null; }
+                container.style.display = 'none';
+                bloqueioAtivo = false;
+            }
         });
     </script>
 </body>
