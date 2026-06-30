@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Cinema</title>
+    <title>Meu Cinema e IPTV</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         body { 
@@ -11,29 +11,41 @@
             color: #fff; 
             text-align: center; 
             font-family: Arial, sans-serif; 
-            padding-top: 50px; 
             margin: 0;
+            padding: 20px;
         }
-        h1 { font-size: 30px; color: #0084ff; }
-        .grade { display: block; max-width: 500px; margin: 0 auto; padding: 0 20px; }
+        h1 { font-size: 28px; color: #0084ff; margin-bottom: 5px; }
+        h2 { font-size: 20px; color: #aaa; margin-top: 20px; }
+        
+        .grade { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            gap: 15px; 
+            max-width: 1000px; 
+            margin: 20px auto; 
+            padding: 0 10px; 
+        }
         
         .btn { 
             display: block; 
             width: 100%; 
-            padding: 25px; 
-            margin: 15px 0; 
+            padding: 20px; 
             background: #1e1e1e; 
             color: white; 
-            border-radius: 15px; 
-            font-size: 22px; 
+            border-radius: 10px; 
+            font-size: 18px; 
             font-weight: bold;
-            border: 4px solid #444; 
+            border: 3px solid #444; 
             cursor: pointer;
             box-sizing: border-box;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
         }
         .btn:hover, .btn:focus { 
             border-color: #0084ff; 
             background: #0056b3; 
+            outline: none;
         }
 
         #containerVideo {
@@ -45,22 +57,32 @@
             z-index: 9999;
         }
         video { width: 100%; height: 100%; }
+        
+        #listaCanais {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid #333;
+            background: #151515;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
 
     <div id="conteudoPrincipal">
-        <h1>🍿 Meu Cinema Particular</h1>
-        <p style="font-size: 18px;">Escolha o que assistir no controle remoto</p>
+        <h1>🍿 Meu Centro de Mídia</h1>
+        <p>Use o controle remoto para selecionar</p>
         
+        <h2>🎬 Filmes</h2>
         <div class="grade">
-            <button class="btn" onclick="iniciarFilme('https://archive.org/download/filme-anaconda-25/Filme-anaconda25.mp4')">
-                🎬 Assistir Filme Anaconda
+            <button class="btn" onclick="iniciarVideo('https://archive.org/download/filme-anaconda-25/Filme-anaconda25.mp4')">
+                Anaconda
             </button>
+        </div>
 
-            <button class="btn" onclick="iniciarFilme('https://edge1-waw-sprintcdn.r66nv9ed.com/hls2/08/09725/hlgpo5mldle1_h/master.m3u8?t=2b9qbunJZ3OyauNnLWNQYC0nyeDmLkevbHKiLpCvWfw&s=1782793318&e=10800&f=53515443&srv=1075&asn=&sp=4000&p=0')">
-                🧪 Rick and Morty (Episódio)
-            </button>
+        <h2>📺 Canais de TV (IPTV Live)</h2>
+        <div class="grade" id="listaCanais">
+            <p id="carregando" style="grid-column: 1/-1; padding: 20px;">Carregando lista de canais...</p>
         </div>
     </div>
 
@@ -71,14 +93,55 @@
     <script>
         var hls = null;
 
-        function iniciarFilme(url) {
+        // Função para carregar e processar a lista .m3u
+        async function carregarIPTV() {
+            const urlM3U = 'https://iptv-org.github.io/iptv/index.m3u';
+            const containerCanais = document.getElementById('listaCanais');
+            
+            try {
+                const resposta = await fetch(urlM3U);
+                const texto = await resposta.text();
+                
+                // Limpa o aviso de carregando
+                containerCanais.innerHTML = '';
+                
+                const linhas = texto.split('\n');
+                let nomeCanal = '';
+                
+                // Vasculha o arquivo procurando os canais e os links
+                for (let i = 0; i < linhas.length; i++) {
+                    let linha = linhas[i].trim();
+                    
+                    if (linha.startsWith('#EXTINF:')) {
+                        // Pega o nome do canal que fica depois da vírgula
+                        const partes = linha.split(',');
+                        nomeCanal = partes[partes.length - 1] || 'Canal Sem Nome';
+                    } else if (linha.startsWith('http')) {
+                        // Encontrou o link do canal, cria o botão na tela
+                        const urlCanal = linha;
+                        
+                        const botao = document.createElement('button');
+                        botao.className = 'btn';
+                        botao.innerText = '📺 ' + nomeCanal;
+                        botao.onclick = function() { iniciarVideo(urlCanal); };
+                        
+                        containerCanais.appendChild(botao);
+                    }
+                }
+            } catch (erro) {
+                containerCanais.innerHTML = '<p style="grid-column: 1/-1; color: red;">Erro ao carregar os canais.</p>';
+                console.error(erro);
+            }
+        }
+
+        function iniciarVideo(url) {
             var container = document.getElementById('containerVideo');
             var video = document.getElementById('playerFilme');
             
             container.style.display = 'block';
 
-            // Se for um link de streaming .m3u8
-            if (url.includes('.m3u8')) {
+            // Canais ao vivo geralmente usam formatos de transmissão (.m3u8 ou streams sem extensão)
+            if (url.includes('.m3u8') || url.includes('master') || !url.includes('.mp4')) {
                 if (Hls.isSupported()) {
                     if (hls) { hls.destroy(); }
                     hls = new Hls();
@@ -92,13 +155,12 @@
                     video.play();
                 }
             } else {
-                // Se for um arquivo normal .mp4
                 if (hls) { hls.destroy(); hls = null; }
                 video.src = url;
                 video.play();
             }
 
-            // Botão 'Back' (Voltar) do controle da TV LG fecha o player
+            // Botão 'Back' (Voltar) do controle remoto fecha o player
             window.addEventListener('keydown', function(e) {
                 if (e.keyCode === 461 || e.key === 'Escape') {
                     video.pause();
@@ -108,6 +170,9 @@
                 }
             });
         }
+
+        // Inicializa a lista de canais assim que a página abre
+        carregarIPTV();
     </script>
 </body>
 </html>
