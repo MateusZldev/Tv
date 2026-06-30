@@ -134,15 +134,7 @@
         let urlReserva = "";
 
         function prevenirBloqueioMisto(url) {
-            if (url && url.startsWith('http://')) {
-                return url.replace('http://', 'https://');
-            }
-            return url;
-        }
-
-        function prevenirBloqueioCORS(url) {
-            // Se o link for do github bruto ou de listas comuns, garante que o player leia sem erro de segurança (CORS)
-            return url;
+            return (url && url.startsWith('http://')) ? url.replace('http://', 'https://');
         }
 
         function prepararFilme(link1, link2) {
@@ -156,6 +148,7 @@
             var container = document.getElementById('containerVideo');
             var video = document.getElementById('playerFilme');
             container.style.display = 'block';
+            video.focus();
 
             video.onerror = function() { acionarLinkReserva(); };
 
@@ -166,10 +159,7 @@
                     hls.loadSource(url);
                     hls.attachMedia(video);
                     hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
-                    
-                    hls.on(Hls.Events.ERROR, function(e, data) { 
-                        if(data.fatal) acionarLinkReserva(); 
-                    });
+                    hls.on(Hls.Events.ERROR, function(e, data) { if(data.fatal) acionarLinkReserva(); });
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                     video.src = url; video.play();
                 }
@@ -177,27 +167,36 @@
                 if (hls) { hls.destroy(); hls = null; }
                 video.src = url; video.play();
             }
+        }
 
-            window.addEventListener('keydown', function(e) {
-                if (e.keyCode === 461 || e.key === 'Escape') {
-                    video.pause(); video.src = '';
-                    if (hls) { hls.destroy(); hls = null; }
-                    container.style.display = 'none';
-                    document.getElementById('avisoErro').style.display = 'none';
+        // Bloqueador inteligente para impedir que a TV saia do site ao apertar Voltar
+        window.addEventListener('keydown', function(e) {
+            if (e.keyCode === 461 || e.key === 'Escape' || e.key === 'Backspace') {
+                var container = document.getElementById('containerVideo');
+                if (container.style.display === 'block') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    fecharPlayerDeVideo();
                 }
-            });
+            }
+        }, true);
+
+        function fecharPlayerDeVideo() {
+            var container = document.getElementById('containerVideo');
+            var video = document.getElementById('playerFilme');
+            video.pause();
+            video.src = '';
+            if (hls) { hls.destroy(); hls = null; }
+            container.style.display = 'none';
+            document.getElementById('avisoErro').style.display = 'none';
         }
 
         function acionarLinkReserva() {
-            if (urlReserva) {
-                var aviso = document.getElementById('avisoErro');
-                aviso.style.display = 'block';
-                setTimeout(function() { aviso.style.display = 'none'; }, 4000);
-                
-                let backup = urlReserva; 
-                urlReserva = ""; 
-                iniciarVideo(backup);
-            }
+            var aviso = document.getElementById('avisoErro');
+            aviso.style.display = 'block';
+            setTimeout(function() { aviso.style.display = 'none'; }, 4000);
+            if (urlReserva) iniciarVideo(urlReserva);
+            urlReserva = ""; 
         }
     </script>
 </body>
