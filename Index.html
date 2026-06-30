@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu Cinema</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         body { 
             background: #121212; 
@@ -19,12 +20,12 @@
         .btn { 
             display: block; 
             width: 100%; 
-            padding: 30px; 
-            margin: 20px 0; 
+            padding: 25px; 
+            margin: 15px 0; 
             background: #1e1e1e; 
             color: white; 
             border-radius: 15px; 
-            font-size: 24px; 
+            font-size: 22px; 
             font-weight: bold;
             border: 4px solid #444; 
             cursor: pointer;
@@ -50,35 +51,59 @@
 
     <div id="conteudoPrincipal">
         <h1>🍿 Meu Cinema Particular</h1>
-        <p style="font-size: 18px;">Selecione o filme abaixo e aperte OK no controle remoto</p>
+        <p style="font-size: 18px;">Escolha o que assistir no controle remoto</p>
         
         <div class="grade">
-            <!-- Seu botão configurado com o link correto do Archive.org -->
             <button class="btn" onclick="iniciarFilme('https://archive.org/download/filme-anaconda-25/Filme-anaconda25.mp4')">
                 🎬 Assistir Filme Anaconda
+            </button>
+
+            <button class="btn" onclick="iniciarFilme('https://edge1-waw-sprintcdn.r66nv9ed.com/hls2/08/09725/hlgpo5mldle1_h/master.m3u8?t=2b9qbunJZ3OyauNnLWNQYC0nyeDmLkevbHKiLpCvWfw&s=1782793318&e=10800&f=53515443&srv=1075&asn=&sp=4000&p=0')">
+                🧪 Rick and Morty (Episódio)
             </button>
         </div>
     </div>
 
-    <!-- O player de vídeo em tela cheia -->
     <div id="containerVideo">
         <video id="playerFilme" controls autoplay></video>
     </div>
 
     <script>
+        var hls = null;
+
         function iniciarFilme(url) {
             var container = document.getElementById('containerVideo');
             var video = document.getElementById('playerFilme');
             
             container.style.display = 'block';
-            video.src = url;
-            video.play();
 
-            // Mapeia o botão 'Back' (Voltar) do controle da TV LG (código 461) para fechar o filme
+            // Se for um link de streaming .m3u8
+            if (url.includes('.m3u8')) {
+                if (Hls.isSupported()) {
+                    if (hls) { hls.destroy(); }
+                    hls = new Hls();
+                    hls.loadSource(url);
+                    hls.attachMedia(video);
+                    hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                        video.play();
+                    });
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = url;
+                    video.play();
+                }
+            } else {
+                // Se for um arquivo normal .mp4
+                if (hls) { hls.destroy(); hls = null; }
+                video.src = url;
+                video.play();
+            }
+
+            // Botão 'Back' (Voltar) do controle da TV LG fecha o player
             window.addEventListener('keydown', function(e) {
                 if (e.keyCode === 461 || e.key === 'Escape') {
                     video.pause();
                     video.src = '';
+                    if (hls) { hls.destroy(); hls = null; }
                     container.style.display = 'none';
                 }
             });
