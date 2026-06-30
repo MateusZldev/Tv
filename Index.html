@@ -6,43 +6,120 @@
     <title>Meu Cinema</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        :root { --netflix-red: #E50914; --bg-black: #141414; --card-bg: #181818; }
-        body { background-color: var(--bg-black); color: #fff; font-family: sans-serif; margin: 0; padding: 0; }
-        .navbar { padding: 20px 40px; position: fixed; top: 0; width: 100%; z-index: 10; background: rgba(0,0,0,0.8); box-sizing: border-box;}
-        .logo { color: var(--netflix-red); font-size: 28px; font-weight: bold; }
-        .content-container { padding: 100px 40px 40px 40px; }
-        .section-title { font-size: 24px; margin: 30px 0; font-weight: bold; }
-        .episodes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-        .ep-card { background: var(--card-bg); border-radius: 8px; cursor: pointer; border: 3px solid transparent; overflow: hidden; transition: transform 0.2s; }
-        .ep-card:hover { transform: scale(1.05); border-color: #fff; }
-        .ep-thumb { width: 100%; height: 160px; background: #333 center center no-repeat; background-size: cover; position: relative; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
+        :root {
+            --netflix-red: #E50914;
+            --bg-black: #141414;
+            --card-bg: #181818;
+        }
+        body { 
+            background-color: var(--bg-black); 
+            color: #fff; 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .navbar {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0; width: 100%; z-index: 10;
+            box-sizing: border-box;
+        }
+        .logo {
+            color: var(--netflix-red);
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .banner {
+            height: 50vh;
+            background: linear-gradient(to top, var(--bg-black) 0%, rgba(0,0,0,0.2) 80%), url('https://images.alphacoders.com/886/886472.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+        .banner-title { font-size: 42px; margin: 0; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+        .banner-desc { font-size: 16px; max-width: 600px; color: #cccccc; margin-top: 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
+
+        .content-container { padding: 40px; }
+        .section-title { font-size: 24px; color: #fff; margin: 30px 0 20px 0; font-weight: bold;}
+
+        .episodes-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 25px; 
+        }
+        .ep-card {
+            background: var(--card-bg); border-radius: 8px; overflow: hidden; cursor: pointer;
+            transition: transform 0.3s ease, border-color 0.3s ease; border: 3px solid transparent; box-sizing: border-box;
+        }
+        .ep-card:hover, .ep-card:focus { transform: scale(1.05); border-color: #fff; outline: none; }
+        .ep-thumb { width: 100%; height: 160px; background: #222 center center no-repeat; background-size: cover; position: relative; }
+        .play-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 45px; opacity: 0.8; color: #fff; }
         .ep-info { padding: 15px; }
-        .ep-title { font-size: 16px; margin: 5px 0 0 0; font-weight: bold; }
+        .ep-number { color: var(--netflix-red); font-size: 13px; font-weight: bold; margin: 0; }
+        .ep-title { font-size: 16px; margin: 5px 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; }
+
         #containerVideo { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; }
         video { width: 100%; height: 100%; }
+        #avisoErro { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 0, 0, 0.8); color: white; padding: 10px 20px; border-radius: 5px; display: none; z-index: 10000; }
     </style>
 </head>
 <body>
 
     <div class="navbar"><div class="logo">NETFLIX</div></div>
 
+    <div class="banner">
+        <h1 class="banner-title">Meu Cinema Privado</h1>
+        <p class="banner-desc">Sua lista personalizada de filmes e séries para assistir direto no celular ou na Smart TV.</p>
+    </div>
+
     <div class="content-container">
-        <div class="section-title">🧬 Rick and Morty (Dublado PT-BR)</div>
+        
+        <div class="section-title">🎬 Filmes Disponíveis</div>
         <div class="episodes-grid">
             
-            <!-- Link Temporada 1 - Servidor Aberto MP4 -->
-            <div class="ep-card" onclick="prepararFilme('https://raw.githubusercontent.com/fshcat/iptv/main/channels/us_rickandmorty.m3u8')">
-                <div class="ep-thumb" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images7.alphacoders.com/633/633294.jpg')">▶ ASSISTIR</div>
+            <!-- Anaconda (RECUPERADO) -->
+            <div class="ep-card" tabindex="0" onclick="prepararFilme('https://www.googleapis.com/drive/v3/files/1JMsCSCuAJMNxcGzWNcdiFJjIciR_eGq5?key=AIzaSyAHfTjunuAnmyVgGADZo4HD4XN2YAO0MnQ&alt=media', 'https://archive.org/download/filme-anaconda-25/Filme-anaconda25.mp4')">
+                <div class="ep-thumb" style="background-image: url('https://files.catbox.moe/qq4y6i.jpeg')">
+                    <div class="play-icon">▶</div>
+                </div>
                 <div class="ep-info">
-                    <p class="ep-title">Maratona Dublada - Temp 1 & 2</p>
+                    <p class="ep-number">Filme Completo</p>
+                    <p class="ep-title">Anaconda 25</p>
                 </div>
             </div>
 
-            <!-- Link Alternativo Google Drive Proxy -->
-            <div class="ep-card" onclick="prepararFilme('https://docs.google.com/uc?export=download&id=1_X_example_id_dublado')">
-                <div class="ep-thumb" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images3.alphacoders.com/905/905151.jpg')">▶ ASSISTIR</div>
+            <!-- Transformers Clássico -->
+            <div class="ep-card" tabindex="0" onclick="prepararFilme('https://archive.org/download/transformers-the-movie-1986-dublado/Transformers%20The%20Movie%20%281986%29%20Dublado.mp4', '')">
+                <div class="ep-thumb" style="background-image: url('https://images.alphacoders.com/605/605655.jpg')">
+                    <div class="play-icon">▶</div>
+                </div>
                 <div class="ep-info">
-                    <p class="ep-title">Temporada 3 (Dublado)</p>
+                    <p class="ep-number">Clássico Dublado</p>
+                    <p class="ep-title">Transformers: O Filme (1986)</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="section-title">🧬 Séries e Animações</div>
+        <div class="episodes-grid">
+
+            <!-- Rick and Morty Maratona (Link m3u8 leve e funcional) -->
+            <div class="ep-card" tabindex="0" onclick="prepararFilme('https://raw.githubusercontent.com/fshcat/iptv/main/channels/us_rickandmorty.m3u8', '')">
+                <div class="ep-thumb" style="background-image: url('https://images6.alphacoders.com/911/911656.jpg')">
+                    <div class="play-icon">▶</div>
+                </div>
+                <div class="ep-info">
+                    <p class="ep-number">Maratona 24h</p>
+                    <p class="ep-title">Rick and Morty (Dublado)</p>
                 </div>
             </div>
 
@@ -52,26 +129,45 @@
     <div id="containerVideo">
         <video id="playerFilme" controls autoplay></video>
     </div>
+    
+    <div id="avisoErro">Link instável! Tentando carregar...</div>
 
     <script>
         var hls = null;
+        let urlPrincipal = "";
+        let urlReserva = "";
         let bloqueioAtivo = false;
 
-        function prepararFilme(url) {
+        function prevenirBloqueioMisto(url) {
+            return (url && url.startsWith('http://')) ? url.replace('http://', 'https://') : url;
+        }
+
+        function prepararFilme(link1, link2) {
+            urlPrincipal = prevenirBloqueioMisto(link1);
+            urlReserva = prevenirBloqueioMisto(link2);
+            iniciarVideo(urlPrincipal);
+        }
+
+        function iniciarVideo(url) {
+            if (!url) return;
             var container = document.getElementById('containerVideo');
             var video = document.getElementById('playerFilme');
             container.style.display = 'block';
             bloqueioAtivo = true;
-            
+
+            // Cria o ponto de retorno seguro para o celular não fechar o site
             history.pushState({player: "ativo"}, "");
 
-            if (url.includes('.m3u8')) {
+            video.onerror = function() { acionarLinkReserva(); };
+
+            if (url.includes('.m3u8') || !url.includes('.mp4')) {
                 if (Hls.isSupported()) {
-                    if (hls) hls.destroy();
+                    if (hls) { hls.destroy(); }
                     hls = new Hls();
                     hls.loadSource(url);
                     hls.attachMedia(video);
                     hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
+                    hls.on(Hls.Events.ERROR, function(e, data) { if(data.fatal) acionarLinkReserva(); });
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                     video.src = url; video.play();
                 }
@@ -81,23 +177,50 @@
             }
         }
 
+        // Controle para TV e Computador
         window.addEventListener('keydown', function(e) {
-            if (e.keyCode === 461 || e.keyCode === 27) {
-                if (bloqueioAtivo) { e.preventDefault(); history.back(); }
+            var container = document.getElementById('containerVideo');
+            if (container.style.display === 'block') {
+                if (e.keyCode === 461 || e.keyCode === 27) {
+                    e.preventDefault();
+                    if (bloqueioAtivo) { history.back(); }
+                }
             }
         });
 
-        window.addEventListener('popstate', function() {
+        // Controle para o Celular (Botão voltar do sistema)
+        window.addEventListener('popstate', function(event) {
             if (bloqueioAtivo) {
-                var container = document.getElementById('containerVideo');
-                var video = document.getElementById('playerFilme');
-                video.pause();
-                video.src = '';
-                if (hls) { hls.destroy(); hls = null; }
-                container.style.display = 'none';
-                bloqueioAtivo = false;
+                fecharPlayerDeVideo();
             }
         });
+
+        function fecharPlayerDeVideo() {
+            var container = document.getElementById('containerVideo');
+            var video = document.getElementById('playerFilme');
+            if (video) {
+                video.pause();
+                video.src = '';
+            }
+            if (hls) { hls.destroy(); hls = null; }
+            container.style.display = 'none';
+            document.getElementById('avisoErro').style.display = 'none';
+            bloqueioAtivo = false;
+        }
+
+        function acionarLinkReserva() {
+            if (!urlReserva) {
+                var aviso = document.getElementById('avisoErro');
+                aviso.style.display = 'block';
+                setTimeout(function() { aviso.style.display = 'none'; }, 3000);
+                return;
+            }
+            var aviso = document.getElementById('avisoErro');
+            aviso.style.display = 'block';
+            setTimeout(function() { aviso.style.display = 'none'; }, 4000);
+            iniciarVideo(urlReserva);
+            urlReserva = ""; 
+        }
     </script>
 </body>
 </html>
