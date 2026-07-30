@@ -1,142 +1,733 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Cinema</title>
-    <style>
-        :root {
-            --netflix-red: #E50914;
-            --bg-black: #141414;
-            --card-bg: #181818;
-        }
-        body { 
-            background-color: var(--bg-black); 
-            color: #fff; 
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-        .navbar {
-            background: rgba(0, 0, 0, 0.85);
-            padding: 20px 40px;
-            display: flex;
-            align-items: center;
-            position: fixed;
-            top: 0; width: 100%; z-index: 10;
-            box-sizing: border-box;
-        }
-        .logo {
-            color: var(--netflix-red);
-            font-size: 28px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-        .content-container { padding: 120px 40px 40px 40px; }
-        .section-title { font-size: 24px; color: #fff; margin-bottom: 20px; font-weight: bold;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MegaMicro | Micro-ondas Usados e Seminovos com Garantia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0f172a;
+      --accent: #25d366;
+      --accent-dark: #1eb956;
+      --brand: #2563eb;
+      --brand-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 16px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.08);
+      --shadow-lg: 0 20px 30px -10px rgba(0,0,0,0.12);
+    }
 
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-            gap: 25px; 
-        }
-        .card {
-            background: var(--card-bg); border-radius: 8px; overflow: hidden; cursor: pointer;
-            transition: transform 0.2s ease; border: 3px solid transparent; box-sizing: border-box;
-        }
-        .card:hover { transform: scale(1.05); border-color: #fff; }
-        .thumb { height: 160px; background: #222 center center no-repeat; background-size: cover; position: relative; display: flex; align-items: center; justify-content: center;}
-        .play-btn { font-size: 40px; color: white; background: rgba(0,0,0,0.5); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .info { padding: 15px; }
-        .title { font-size: 16px; margin: 0; font-weight: bold; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
 
-        /* Container do Player em Tela Cheia */
-        #playerModal { 
-            display: none; 
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100vw; height: 100vh; 
-            background: #000; 
-            z-index: 9999; 
-        }
-        iframe { width: 100%; height: 100%; border: none; }
-    </style>
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header */
+    header {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo span {
+      color: var(--brand);
+    }
+
+    .btn-header {
+      background-color: var(--accent);
+      color: white;
+      padding: 0.65rem 1.25rem;
+      border-radius: 99px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .btn-header:hover {
+      background-color: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+      padding: 5rem 1.5rem 6rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-wrapper {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-pill {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.4rem 1rem;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: #93c5fd;
+    }
+
+    .hero h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: #94a3b8;
+      margin-bottom: 2rem;
+    }
+
+    /* Trust Badges */
+    .trust-grid {
+      max-width: 1100px;
+      margin: -2.5rem auto 4rem;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .trust-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .trust-icon {
+      background: #eff6ff;
+      color: var(--brand);
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .trust-info h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+
+    .trust-info p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Catalog & Filters */
+    .catalog {
+      max-width: 1200px;
+      margin: 0 auto 5rem;
+      padding: 0 1.5rem;
+    }
+
+    .catalog-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+
+    .catalog-header h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .catalog-header p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Filter Buttons */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      background: var(--surface);
+      padding: 0.5rem;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filter-btn {
+      border: none;
+      background: transparent;
+      padding: 0.5rem 1.25rem;
+      border-radius: 99px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Grid de Produtos */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-img-wrap {
+      position: relative;
+      height: 220px;
+      background: #f1f5f9;
+      overflow: hidden;
+    }
+
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .card:hover .card-img-wrap img {
+      transform: scale(1.05);
+    }
+
+    .badge-tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(4px);
+      color: white;
+      padding: 0.3rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stock-tag {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+
+    .specs-list {
+      list-style: none;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .specs-list li {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-price-area {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .price-old {
+      font-size: 0.85rem;
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .price-main {
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: #16a34a;
+      display: flex;
+      align-items: baseline;
+      gap: 0.4rem;
+    }
+
+    .price-main span {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-card {
+      flex: 1;
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.85rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: background 0.2s;
+    }
+
+    .btn-card:hover {
+      background: var(--accent-dark);
+    }
+
+    .btn-details {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.85rem;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-details:hover {
+      background: #e2e8f0;
+    }
+
+    /* FAQ Section */
+    .faq-section {
+      max-width: 800px;
+      margin: 0 auto 5rem;
+      padding: 0 1.5rem;
+    }
+
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      padding: 1.25rem;
+    }
+
+    .faq-item h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .faq-item p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--primary);
+      color: white;
+      padding: 4rem 1.5rem 2rem;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .footer-col h4 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-col p, .footer-col li {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      list-style: none;
+    }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 2rem;
+      border-top: 1px solid #334155;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--surface);
+      max-width: 500px;
+      width: 100%;
+      border-radius: var(--radius);
+      padding: 2rem;
+      position: relative;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    /* Float WhatsApp */
+    .float-wa {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 60px;
+      height: 60px;
+      background-color: var(--accent);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px rgba(37, 211, 102, 0.5);
+      z-index: 99;
+      text-decoration: none;
+      font-size: 1.8rem;
+      transition: transform 0.2s;
+    }
+
+    .float-wa:hover {
+      transform: scale(1.1);
+    }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 2rem; }
+      .filter-bar { border-radius: 16px; }
+      .card-actions { flex-direction: column; }
+    }
+  </style>
 </head>
 <body>
 
-    <div class="navbar"><div class="logo">NETFLIX</div></div>
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <a href="#" class="logo">⚡ Mega<span>Micro</span></a>
+      <a href="https://wa.me/5511954404672?text=Olá!%20Vim%20pelo%20site%20e%20quero%20ver%20os%20micro-ondas." class="btn-header" target="_blank">
+        💬 Atendimento WhatsApp
+      </a>
+    </div>
+  </header>
 
-    <div class="content-container">
-        <div class="section-title">🎬 Catálogo Atualizado (Embed Player)</div>
-        <div class="grid">
-            
-            <!-- Anaconda 25 (Hospedado no Drive - Puxando o Stream Direto) -->
-            <div class="card" onclick="abrirPlayer('https://archive.org/video/embed.php?id=filme-anaconda-25')">
-                <div class="thumb" style="background-image: url('https://files.catbox.moe/qq4y6i.jpeg')">
-                    <div class="play-btn">▶</div>
-                </div>
-                <div class="info"><p class="title">Anaconda 25</p></div>
-            </div>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-wrapper">
+      <span class="hero-pill">🔥 Economize até 60% com relação ao novo</span>
+      <h1>Micro-ondas Seminovos com Qualidade de Novo</h1>
+      <p>Aparelhos rigorosamente testados, higienizados e acompanhados de garantia. Entrega rápida na sua região!</p>
+    </div>
+  </section>
 
-            <!-- Transformers Clássico Dublado -->
-            <div class="card" onclick="abrirPlayer('https://archive.org/video/embed.php?id=transformers-the-movie-1986-dublado')">
-                <div class="thumb" style="background-image: url('https://images.alphacoders.com/605/605655.jpg')">
-                    <div class="play-btn">▶</div>
-                </div>
-                <div class="info"><p class="title">Transformers: O Filme (1986)</p></div>
-            </div>
+  <!-- Trust Badges -->
+  <section class="trust-grid">
+    <div class="trust-card">
+      <div class="trust-icon">🛠️</div>
+      <div class="trust-info">
+        <h3>100% Testados</h3>
+        <p>Placa, magnetron e pintura em estado impecável.</p>
+      </div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">🧪</div>
+      <div class="trust-info">
+        <h3>Higienização Profunda</h3>
+        <p>Pronto para uso imediato com limpeza técnica sanitizada.</p>
+      </div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">🛡️</div>
+      <div class="trust-info">
+        <h3>90 Dias de Garantia</h3>
+        <p>Garantia real com suporte direto via WhatsApp.</p>
+      </div>
+    </div>
+  </section>
 
-            <!-- Rick and Morty - Temporada 1 Completa -->
-            <div class="card" onclick="abrirPlayer('https://archive.org/video/embed.php?id=rick-and-morty-season-1_202209')">
-                <div class="thumb" style="background-image: url('https://images6.alphacoders.com/911/911656.jpg')">
-                    <div class="play-icon"><div class="play-btn">▶</div></div>
-                </div>
-                <div class="info"><p class="title">Rick and Morty (S01 - Inglês)</p></div>
-            </div>
+  <!-- Catalog Section -->
+  <section class="catalog">
+    <div class="catalog-header">
+      <h2>Estoque Disponível Hoje</h2>
+      <p>Produtos únicos e com estoque limitado. Atualizado em tempo real.</p>
+      
+      <!-- Filtros Ativos -->
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterProducts('all', this)">Todos</button>
+        <button class="filter-btn" onclick="filterProducts('110v', this)">110V</button>
+        <button class="filter-btn" onclick="filterProducts('220v', this)">220V</button>
+        <button class="filter-btn" onclick="filterProducts('seminovo', this)">Seminovos</button>
+      </div>
+    </div>
 
+    <!-- Product Grid -->
+    <div class="products-grid" id="products-container">
+
+      <!-- Item 1 -->
+      <div class="card" data-category="110v seminovo">
+        <div class="card-img-wrap">
+          <span class="badge-tag">Seminovo</span>
+          <span class="stock-tag">Única Unidade</span>
+          <img src="https://images.unsplash.com/photo-1585659722983-3a675dabf23d?auto=format&fit=crop&w=600&q=80" alt="Brastemp 30L Inox">
         </div>
+        <div class="card-body">
+          <h3 class="card-title">Brastemp 30L Espelhado</h3>
+          <ul class="specs-list">
+            <li>✔ Voltagem: <strong>110V</strong></li>
+            <li>✔ Capacidade: <strong>30 Litros</strong></li>
+            <li>✔ Painel digital completo</li>
+          </ul>
+          <div class="card-price-area">
+            <div class="price-old">De R$ 790,00</div>
+            <div class="price-main">R$ 380,00 <span>à vista</span></div>
+          </div>
+          <div class="card-actions">
+            <button class="btn-details" onclick="openModal('Brastemp 30L Espelhado', 'Modelagem em Inox com espelho frontal, excelente aquecimento e funções pré-programadas. Estado estético 9.5/10.')">Info</button>
+            <a href="https://wa.me/5511954404672?text=Olá!%20Quero%20comprar%20o%20Brastemp%2030L%20Espelhado%20(R$%20380)" class="btn-card" target="_blank">Comprar</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 2 -->
+      <div class="card" data-category="220v">
+        <div class="card-img-wrap">
+          <span class="badge-tag">Revisado</span>
+          <span class="stock-tag">Única Unidade</span>
+          <img src="https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?auto=format&fit=crop&w=600&q=80" alt="Consul 20L">
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Consul Compacto 20L</h3>
+          <ul class="specs-list">
+            <li>✔ Voltagem: <strong>220V</strong></li>
+            <li>✔ Capacidade: <strong>20 Litros</strong></li>
+            <li>✔ Ideal para espaços pequenos</li>
+          </ul>
+          <div class="card-price-area">
+            <div class="price-old">De R$ 520,00</div>
+            <div class="price-main">R$ 250,00 <span>à vista</span></div>
+          </div>
+          <div class="card-actions">
+            <button class="btn-details" onclick="openModal('Consul Compacto 20L', 'Micro-ondas prático e compacto. Prato giratório original. Perfeito para uso diário em apartamentos.')">Info</button>
+            <a href="https://wa.me/5511954404672?text=Olá!%20Quero%20comprar%20o%20Consul%2020L%20(R$%20250)" class="btn-card" target="_blank">Comprar</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 3 (Novo item com nova imagem) -->
+      <div class="card" data-category="110v seminovo">
+        <div class="card-img-wrap">
+          <span class="badge-tag">Seminovo</span>
+          <span class="stock-tag">Novo no Estoque</span>
+          <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80" alt="Panasonic Style 32L">
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Panasonic Style 32L Inox</h3>
+          <ul class="specs-list">
+            <li>✔ Voltagem: <strong>110V</strong></li>
+            <li>✔ Capacidade: <strong>32 Litros</strong></li>
+            <li>✔ Descongelamento Inteligente</li>
+          </ul>
+          <div class="card-price-area">
+            <div class="price-old">De R$ 890,00</div>
+            <div class="price-main">R$ 450,00 <span>à vista</span></div>
+          </div>
+          <div class="card-actions">
+            <button class="btn-details" onclick="openModal('Panasonic Style 32L Inox', 'Modelo com alta potência de aquecimento, revestimento interno antiaderente de fácil limpeza e acabamento em aço escovado.')">Info</button>
+            <a href="https://wa.me/5511954404672?text=Olá!%20Quero%20comprar%20o%20Panasonic%20Style%2032L%20(R$%20450)" class="btn-card" target="_blank">Comprar</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 4 -->
+      <div class="card" data-category="110v seminovo">
+        <div class="card-img-wrap">
+          <span class="badge-tag">Seminovo</span>
+          <span class="stock-tag">Destaque</span>
+          <img src="https://images.unsplash.com/photo-1585659722983-3a675dabf23d?auto=format&fit=crop&w=600&q=80" alt="Electrolux 31L">
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Electrolux 31L Meus Pratos</h3>
+          <ul class="specs-list">
+            <li>✔ Voltagem: <strong>110V</strong></li>
+            <li>✔ Capacidade: <strong>31 Litros</strong></li>
+            <li>✔ Função tira-odor</li>
+          </ul>
+          <div class="card-price-area">
+            <div class="price-old">De R$ 860,00</div>
+            <div class="price-main">R$ 420,00 <span>à vista</span></div>
+          </div>
+          <div class="card-actions">
+            <button class="btn-details" onclick="openModal('Electrolux 31L', 'Modelo moderno com menu rápido, trava de segurança e interior sem manchas. Funcionamento perfeito.')">Info</button>
+            <a href="https://wa.me/5511954404672?text=Olá!%20Quero%20comprar%20o%20Electrolux%2031L%20(R$%20420)" class="btn-card" target="_blank">Comprar</a>
+          </div>
+        </div>
+      </div>
+
     </div>
+  </section>
 
-    <!-- Janela de reprodução segura -->
-    <div id="playerModal">
-        <iframe id="cinemaFrame" src="" allowfullscreen allow="autoplay"></iframe>
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="catalog-header">
+      <h2>Dúvidas Frequentes</h2>
     </div>
-
-    <script>
-        let videoAberto = false;
-
-        function abrirPlayer(urlEmbed) {
-            const modal = document.getElementById('playerModal');
-            const iframe = document.getElementById('cinemaFrame');
-            
-            iframe.src = urlEmbed;
-            modal.style.display = 'block';
-            videoAberto = true;
-
-            // Histórico para celulares não fecharem o site ao voltar
-            history.pushState({player: "ativo"}, "");
-        }
-
-        // Fecha o player se apertar Voltar na TV (461) ou ESC (27)
-        window.addEventListener('keydown', function(e) {
-            if (videoAberto && (e.keyCode === 461 || e.keyCode === 27)) {
-                e.preventDefault();
-                history.back();
-            }
-        });
-
-        // Evento que escuta o botão voltar do celular e da TV sincronizados
-        window.addEventListener('popstate', function() {
-            if (videoAberto) {
-                const modal = document.getElementById('playerModal');
-                const iframe = document.getElementById('cinemaFrame');
-                
-                iframe.src = ""; // Corta o carregamento do player imediatamente
-                modal.style.display = 'none';
-                videoAberto = false;
-            }
-        });
-    </script>
-</body>
-</html>
+    <div class="faq-item">
+      <h3>Como funciona a garantia?</h3>
+      <p>Oferecemos 90 dias de garantia total para o funcionamento do aparelho. Se apresentar qualquer defeito técnico no período, trocamos ou consertamos sem custo.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Quais as formas de pagamento?</h3>
+      <p>Aceitamos PIX com desconto, cartões de crédito (com possibilidade de parcelamento) e dinheiro no momento da entrega/retirada.</p>
+    </div>
+    <div class="faq-item">
